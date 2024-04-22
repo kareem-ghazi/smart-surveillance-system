@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+/x64
+/smart-su.326b2b66/x64
+/.vs/smart-surveillance-system

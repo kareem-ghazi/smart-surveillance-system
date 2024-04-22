@@ -149,7 +149,6 @@
     <ClInclude Include="Database.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="ObjectDetector.h" />
-    <ClInclude Include="GUI.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageProcessor.h" />
   </ItemGroup>

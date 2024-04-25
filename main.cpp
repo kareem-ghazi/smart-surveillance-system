@@ -12,6 +12,7 @@
 
 #include "ImageProcessor.h"
 #include "ObjectDetector.h"
+#include "Database.h"
 
 #define WINDOW1_NAME "Camera"
 #define WINDOW2_NAME "Settings & Information"
@@ -21,7 +22,7 @@
 using namespace cv;
 using namespace std;
 
-bool createGUI(Mat& originalFrame, VideoCapture& capture, int faceCount);
+void createGUI(Mat& originalFrame, VideoCapture& capture, int faceCount);
 void createInformationComponent(Mat& frame, int faceCount);
 void createSettingsComponent(Mat& frame, VideoCapture& capture);
 bool addEntry();
@@ -31,16 +32,22 @@ void closeWindow(const cv::String& name);
 
 Mat imageMatrix;
 Image image;
+Image copyImage;
 Image imageGray;
 Image imageHist;
 vector<Rect> faces;
-ObjectDetector faceDetector("Resources/haarcascade_frontalface_default.xml");
+vector<string> labels;
+Database database;
+ObjectDetector faceDetector("Resources/haarcascade_frontalface_default.xml", database);
 
+Image images[10];
 bool webcamOn = true;
+bool isRunning = true;
 bool fpsCounter = false;
 int faceCounter = 1;
 double fps = 0;
 bool isAdding = false;
+string addedName;
 bool isRemoving = false;
 
 int main() {
@@ -48,7 +55,6 @@ int main() {
 
 	const cv::String windows[] = { WINDOW1_NAME, WINDOW2_NAME };
 	cvui::init(windows, 2);
-	bool isRunning = true;
 
 	while (cv::getWindowProperty(WINDOW2_NAME, 0) >= 0 && cv::getWindowProperty(WINDOW1_NAME, 0) >= 0)
 	{
@@ -57,7 +63,7 @@ int main() {
 		if (!cap.isOpened())
 		{
 			cvui::context(WINDOW2_NAME);
-			isRunning = createGUI(GUIFrame, cap, 0);
+			createGUI(GUIFrame, cap, 0);
 
 			cvui::imshow(WINDOW2_NAME, GUIFrame);
 
@@ -73,24 +79,35 @@ int main() {
 
 		cap >> imageMatrix;
 		image.setImageMatrix(imageMatrix);
+		copyImage.setImageMatrix(imageMatrix);
 
 		imageGray = ImageProcessor::grayscale(image);
 		imageHist = ImageProcessor::equalizeHistogram(imageGray);
 
 		faceDetector.detect(imageHist, faces);
+		labels.clear();
+		labels.resize(faces.size());
 
 		for (int i = 0; i < faces.size(); i++)
 		{
-			//Image croppedFace = ImageProcessor::crop(image, faces[i].tl(), faces[i].br());
-			//Image face = ImageProcessor::resize(image, 128, 128);*/
-			//Database::saveImage(filepath, image);
+			Image croppedImage = ImageProcessor::crop(copyImage, faces[i].tl(), faces[i].br());
+			Image face = ImageProcessor::resize(croppedImage, 128, 128);
 
-			ImageProcessor::drawRectangle(image, faces[i].tl(), faces[i].br(), 'G');
+			string label = faceDetector.recognize(face);
+
+			if (!label.empty())
+			{
+				labels.at(i) = label;
+			}
+			
+			ImageProcessor::drawRectangle(image, faces[i].tl(), faces[i].br(), 
+				(label.empty() ? 'R' : 'G'));
 
 			int pos_x = max(faces[i].tl().x, 0);
 			int pos_y = max(faces[i].tl().y - 10, 0);
 
-			ImageProcessor::putText(image, pos_x, pos_y, 'G', 0.75, "Kareem Ghazi");
+			ImageProcessor::putText(image, pos_x, pos_y, (label.empty() ? 'R' : 'G'), 
+				0.75, label);
 		}
 
 		cvui::context(WINDOW2_NAME);
@@ -110,7 +127,7 @@ int main() {
 }
 
 // Creates a graphical user interface for interacting with the system. Includes system information & settings.
-bool createGUI(Mat& frame, VideoCapture& capture, int faceCount)
+void createGUI(Mat& frame, VideoCapture& capture, int faceCount)
 {
 	Mat copyFrame = frame.clone();
 	Mat doubleBuffer = copyFrame.clone();
@@ -118,15 +135,13 @@ bool createGUI(Mat& frame, VideoCapture& capture, int faceCount)
 	doubleBuffer.copyTo(frame);
 
 	if (cvui::button(frame, frame.cols - 90, frame.rows - 40, "Quit")) {
-		return false;
+		isRunning = false;
 	}
 
 	createInformationComponent(frame, faceCount);
 	createSettingsComponent(frame, capture);
 
 	cvui::printf(frame, 30, frame.rows - 31, 0.4, 0xCECECE, "Copyright 2024 by Kareem Ghazi");
-
-	return true;
 }
 
 // Creates information 'window' component inside of the specified window.
@@ -147,14 +162,32 @@ void createInformationComponent(Mat& frame, int faceCount)
 	cvui::space(5);
 	cvui::printf(0.4, 0xcccccc, "Currently Detecting: ");
 
-	if (faceCount == 1)
+	int unknownFaces = 0;
+	int knownFaces = 0;
+
+	for (string label : labels)
 	{
-		cvui::printf(0.4, 0x00ff00, "Kareem Ghazi");
+		if (label.empty())
+		{
+			unknownFaces++;
+		}
+		else {
+			cvui::text(label, 0.4, 0x00ff00);
+			knownFaces++;
+		}
 	}
-	else if (faceCount >= 2) {
-		cvui::printf(0.4, 0x00ff00, "Kareem Ghazi");
-		cvui::printf(0.4, 0xff474c, "...and %d other people.", faceCount - 1);
+
+	if (unknownFaces > 0 && knownFaces > 0)
+	{
+		cvui::printf(0.4, 0xff474c, "...and %d other people.", unknownFaces);
 	}
+	else if (unknownFaces == 1) {
+		cvui::printf(0.4, 0xff474c, "%d unknown person.", unknownFaces);
+	}
+	else if (unknownFaces > 1) {
+		cvui::printf(0.4, 0xff474c, "%d unknown people.", unknownFaces);
+	}
+	
 	cvui::endColumn();
 }
 
@@ -185,14 +218,14 @@ void createSettingsComponent(Mat& frame, VideoCapture& capture)
 
 	cvui::printf(frame, frame.cols - 185, 125, 0.4, 0xcccccc, "Adds a new person.");
 	if (cvui::button(frame, frame.cols - 185, 145, "Add")) {
-		/*system("cls");
-		cout << "Enter the person's name: " << endl;
+		system("cls");
+		cout << "Enter the person's name: ";
 
-		string name;
-		cin >> name;*/
+		cin >> addedName;
 
 		openWindow(WINDOW3_NAME);
 		isAdding = addEntry();
+		system("cls");
 	}
 
 	if (isAdding)
@@ -202,6 +235,11 @@ void createSettingsComponent(Mat& frame, VideoCapture& capture)
 
 	cvui::printf(frame, frame.cols - 185, 195, 0.4, 0xcccccc, "Removes a person.");
 	if (cvui::button(frame, frame.cols - 185, 215, "Remove")) {
+		system("cls");
+		cout << "Enter the person's name: " << endl;
+
+		cin >> addedName;
+
 		openWindow(WINDOW4_NAME);
 		isRemoving = removeEntry();
 	}
@@ -221,13 +259,20 @@ bool addEntry()
 
 	cvui::printf(addEntryGUI, 25, 20, 0.4, 0x00ff00, "Press the record button to record your face. (%d/10)", faceCounter);
 
-	if (cvui::button(addEntryGUI, 145, 45, "Record")) {
+	if (cvui::button(addEntryGUI, 145, 45, "Record") && faces.size() == 1) {
+		Image croppedImage = ImageProcessor::crop(copyImage, faces[0].tl(), faces[0].br());
+		Image face = ImageProcessor::resize(croppedImage, 128, 128);
+
+		images[faceCounter - 1] = face;
 		faceCounter++;
 	}
 
 	if (faceCounter == 11)
 	{
 		closeWindow(WINDOW3_NAME);
+		database.addEntry(addedName, images);
+		faceDetector.trainModel();
+
 		faceCounter = 1;
 		return false;
 	}

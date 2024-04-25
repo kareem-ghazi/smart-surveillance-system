@@ -44,13 +44,13 @@ void ImageProcessor::drawRectangle(Image& image, Point pointOne, Point pointTwo,
 	switch (rectColor)
 	{
 	case 'R':
-		cv::rectangle(imageMatrix, pointOne, pointTwo, Scalar(255, 0, 0), 2, 8, 0);
+		cv::rectangle(imageMatrix, pointOne, pointTwo, Scalar(0, 0, 255), 2, 8, 0);
 		break;
 	case 'G':
 		cv::rectangle(imageMatrix, pointOne, pointTwo, Scalar(0, 255, 0), 2, 8, 0);
 		break;
 	case 'B':
-		cv::rectangle(imageMatrix, pointOne, pointTwo, Scalar(0, 0, 255), 2, 8, 0);
+		cv::rectangle(imageMatrix, pointOne, pointTwo, Scalar(255, 0, 0), 2, 8, 0);
 		break;
 	default:
 		break;
@@ -66,13 +66,13 @@ void ImageProcessor::putText(Image& image, int theX, int theY, char fontColor, d
 	switch (fontColor)
 	{
 	case 'R':
-		cv::putText(imageMatrix, text, Point(theX, theY), FONT_HERSHEY_DUPLEX, fontScale, Scalar(255, 0, 0), 1.0);
+		cv::putText(imageMatrix, text, Point(theX, theY), FONT_HERSHEY_DUPLEX, fontScale, Scalar(0, 0, 255), 1.0);
 		break;
 	case 'G':
 		cv::putText(imageMatrix, text, Point(theX, theY), FONT_HERSHEY_DUPLEX, fontScale, Scalar(0, 255, 0), 1.0);
 		break;
 	case 'B':
-		cv::putText(imageMatrix, text, Point(theX, theY), FONT_HERSHEY_DUPLEX, fontScale, Scalar(0, 0, 255), 1.0);
+		cv::putText(imageMatrix, text, Point(theX, theY), FONT_HERSHEY_DUPLEX, fontScale, Scalar(255, 0, 0), 1.0);
 		break;
 	default:
 		break;

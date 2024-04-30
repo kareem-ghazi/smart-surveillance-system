@@ -84,13 +84,14 @@ int main() {
 		imageGray = ImageProcessor::grayscale(image);
 		imageHist = ImageProcessor::equalizeHistogram(imageGray);
 
-		faceDetector.detect(imageHist, faces);
+		faceDetector.detect(imageGray, faces);
+
 		labels.clear();
 		labels.resize(faces.size());
 
 		for (int i = 0; i < faces.size(); i++)
 		{
-			Image croppedImage = ImageProcessor::crop(copyImage, faces[i].tl(), faces[i].br());
+			Image croppedImage = ImageProcessor::crop(imageHist, faces[i].tl(), faces[i].br());
 			Image face = ImageProcessor::resize(croppedImage, 128, 128);
 
 			string label = faceDetector.recognize(face);
@@ -102,6 +103,11 @@ int main() {
 			
 			ImageProcessor::drawRectangle(image, faces[i].tl(), faces[i].br(), 
 				(label.empty() ? 'R' : 'G'));
+
+			if (label.empty())
+			{
+				continue;
+			}
 
 			int pos_x = max(faces[i].tl().x, 0);
 			int pos_y = max(faces[i].tl().y - 10, 0);
@@ -164,7 +170,7 @@ void createInformationComponent(Mat& frame, int faceCount)
 
 	int unknownFaces = 0;
 	int knownFaces = 0;
-
+	
 	for (string label : labels)
 	{
 		if (label.empty())

@@ -82,7 +82,7 @@ void Database::loadEntries()
 		label = fileName.substr(filepathDelimeter.length(), position - filepathDelimeter.length());
 		fileName.erase(0, position + 1);
 
-		cout << label << endl;
+		//cout << label << endl;
 		
 		position = fileName.find(delimiter);
 		id = stoi(fileName.substr(0, position));

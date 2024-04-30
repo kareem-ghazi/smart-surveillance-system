@@ -1,5 +1,6 @@
 #include "ImageProcessor.h"
 
+// Converts image to grayscale and returns a copy of it.
 Image ImageProcessor::grayscale(Image image)
 {
 	Mat imageMatrix;
@@ -9,6 +10,7 @@ Image ImageProcessor::grayscale(Image image)
 	return Image(imageMatrix);
 }
 
+// Equalizes the histogram of an image and returns a copy of it.
 Image ImageProcessor::equalizeHistogram(Image image)
 {
 	Mat imageMatrix;
@@ -18,7 +20,7 @@ Image ImageProcessor::equalizeHistogram(Image image)
 	return Image(imageMatrix);
 }
 
-// didnt implement gpu overload.
+// Resizes image and returns a copy of the image.
 Image ImageProcessor::resize(Image image, int width, int height)
 {
 	Mat imageMatrix;
@@ -28,19 +30,21 @@ Image ImageProcessor::resize(Image image, int width, int height)
 	return Image(imageMatrix);
 }
 
-// didnt implement gpu overload.
+// Crops the image for a defined set of points and returns a copy of the image.
 Image ImageProcessor::crop(Image image, Point2i pointOne, Point2i pointTwo)
 {
 	Mat imageMatrix = image.getImageMatrix();
 	Rect ROI(pointOne, pointTwo);
 
-	return Image(imageMatrix(ROI)); // shit code, dont forget to rectify.
+	return Image(imageMatrix(ROI));
 }
 
+// Draws a rectangle on an area with a defined set of points on the original passed image.
 void ImageProcessor::drawRectangle(Image& image, Point pointOne, Point pointTwo, char rectColor)
 {
 	Mat imageMatrix = image.getImageMatrix();
 
+	// Decide the color of the rectangle.
 	switch (rectColor)
 	{
 	case 'R':
@@ -53,16 +57,20 @@ void ImageProcessor::drawRectangle(Image& image, Point pointOne, Point pointTwo,
 		cv::rectangle(imageMatrix, pointOne, pointTwo, Scalar(255, 0, 0), 2, 8, 0);
 		break;
 	default:
+		cv::rectangle(imageMatrix, pointOne, pointTwo, Scalar(0, 0, 255), 2, 8, 0);
+		cout << "Error: Couldn't draw rectangle with the specified color. Defaulting to RED." << endl;
 		break;
 	}
 
 	image.setImageMatrix(imageMatrix);
 }
 
+// Places text on the original passed image.
 void ImageProcessor::putText(Image& image, int theX, int theY, char fontColor, double fontScale, string text)
 {
 	Mat imageMatrix = image.getImageMatrix();
 
+	// Decides the font color based on what was passed.
 	switch (fontColor)
 	{
 	case 'R':
@@ -75,6 +83,8 @@ void ImageProcessor::putText(Image& image, int theX, int theY, char fontColor, d
 		cv::putText(imageMatrix, text, Point(theX, theY), FONT_HERSHEY_DUPLEX, fontScale, Scalar(255, 0, 0), 1.0);
 		break;
 	default:
+		cv::putText(imageMatrix, text, Point(theX, theY), FONT_HERSHEY_DUPLEX, fontScale, Scalar(0, 0, 255), 1.0);
+		cout << "Error: Couldn't place text with the specified color. Defaulting to RED." << endl;
 		break;
 	}
 

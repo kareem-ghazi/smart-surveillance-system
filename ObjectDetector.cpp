@@ -1,5 +1,6 @@
 #include "ObjectDetector.h"
 
+// Initializes the object detector with the path to a cascade classifier.
 ObjectDetector::ObjectDetector(string cascadePath)
 {
 	try
@@ -58,7 +59,7 @@ ObjectDetector::ObjectDetector(string cascadePath, Database database)
 
 void ObjectDetector::detect(Image image, vector<Rect> &objects)
 {
-	this->objectCascade.detectMultiScale(image.getImageMatrix(), objects, 1.1, 10, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
+	this->objectCascade.detectMultiScale(image.getImageMatrix(), objects, 1.1, 10, 0 | CASCADE_SCALE_IMAGE, Size(20, 20));
 }
 
 void ObjectDetector::trainModel()
@@ -69,6 +70,11 @@ void ObjectDetector::trainModel()
 	model->save("./data/eigenface.yml");
 }
 
+/*
+* Recognize an image with a face.
+* 
+* Only works with a grayscale image that has a size of 127 x 127 pixels.
+*/
 string ObjectDetector::recognize(Image image)
 {
 	if (database.getIDs().empty()) // shit code!
@@ -79,10 +85,12 @@ string ObjectDetector::recognize(Image image)
 	int id = -1;
 	double confidence = 0.0;
 
-	image.setImageMatrix(ImageProcessor::grayscale(image).getImageMatrix());
+	//image.setImageMatrix(ImageProcessor::grayscale(image).getImageMatrix());
 	model->predict(image.getImageMatrix(), id, confidence);
 
-	if (confidence >= 3000)
+	cout << confidence << endl;
+
+	if (confidence >= 5500)
 	{
 		return "";
 	}

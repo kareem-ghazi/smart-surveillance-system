@@ -1,5 +1,6 @@
 #include "Image.h"
 
+// Empty constructor.
 Image::Image()
 {
 

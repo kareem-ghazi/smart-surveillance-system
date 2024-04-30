@@ -33,28 +33,34 @@ Download the latest version from the [releases](https://github.com/kareem-ghazi/
     
 ## Run Locally
 
+### Building OpenCV
+1. Download the source of the latest version of [opencv](https://github.com/opencv/opencv) and [opencv_contrib](https://github.com/opencv/opencv_contrib) (make sure both versions are the same).
+
+2. Download [CMake](https://cmake.org/download/) and [Visual Studio 2022](https://visualstudio.microsoft.com/).
+
+3. Place the opencv and opencv_contrib sources in the same folder along with an empty folder called build.
+
+4. Set the source path to be your opencv folder and the build path to be the build folder. After setting, configure. 
+
+5. Set the extra module parameter to be the opencv_contrib/modules folder. After setting, configure. 
+
+6. Check the opencv_world and opencv_module_face options. After setting, configure and generate files. 
+
+7. Open the project through CMake. Search for the INSTALL module and build it. (two times, release & debug configurations) 
+
+8. You're done! The binaries, lib, and include files are in the install folder. Do not forget to edit your environmental variables to include OpenCV in your users PATH. 
+
+- INCLUDING OPENCV IN PROJECT
+1. Open the properties for the project in Visual Studio 
+
+2. Configure the include and library directories for OpenCV in Visual Studio 
+
+3. Add "opencv_world4xx.lib" to your linker input
+
 Clone the project
 
 ```bash
   git clone https://link-to-project
-```
-
-Go to the project directory
-
-```bash
-  cd my-project
-```
-
-Install dependencies
-
-```bash
-  npm install
-```
-
-Start the server
-
-```bash
-  npm run start
 ```
 
 

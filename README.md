@@ -18,13 +18,7 @@ Some of the features currently implemented are:
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
-
-## Demo
-
-Insert gif or link to demo
-
+![](meta/screenshot.png)
 
 ## Installation
 
@@ -36,40 +30,40 @@ Download the latest version from the [releases](https://github.com/kareem-ghazi/
 1. Download the source of the latest version of [opencv](https://github.com/opencv/opencv) and [opencv_contrib](https://github.com/opencv/opencv_contrib) (make sure both versions are the same).
 
 2. Download [CMake](https://cmake.org/download/) and [Visual Studio 2022](https://visualstudio.microsoft.com/). 
-- ![](imgs/devc++.png)
+- ![](meta/devc++.png)
 
 3. Place the opencv and opencv_contrib sources in the same folder along with an empty folder called build. 
-- ![](imgs/prebuild.png)
+- ![](meta/prebuild.png)
 
 4. Set the source path to be your OpenCV source folder and the build path to be the build folder. After setting, configure. 
-- ![](imgs/cmake-config.png) 
+- ![](meta/cmake-config.png) 
 
 5. Set the `OPENCV_EXTRA_MODULES_PATH` option to be the opencv_contrib/modules folder. After setting, configure. 
-- ![](imgs/extra-modules.png)
+- ![](meta/extra-modules.png)
 
 6. Check the `BUILD_opencv_world` and `BUILD_opencv_face` options. After setting, configure and generate files. 
-- ![](imgs/opencv-world.png) 
-- ![](imgs/opencv-face.png)
+- ![](meta/opencv-world.png) 
+- ![](meta/opencv-face.png)
 
 7. Open the project through CMake. Search for the INSTALL module and build it (two times, release & debug configurations). 
-- ![](imgs/install.png)
-- ![](imgs/install-build.png)
+- ![](meta/install.png)
+- ![](meta/install-build.png)
 
 8. You're done! The binaries, lib, and include files are in the install folder. Do not forget to edit your environmental variables to include OpenCV in your users PATH. 
-- ![](imgs/build.png)
+- ![](meta/build.png)
 
 ### Including OpenCV in the Project
 1. Clone the project
 
 ```bash
-  git clone https://link-to-project
+  git clone https://github.com/kareem-ghazi/smart-surveillance-system
 ```
 
 2. Configure the `include` and `library directories for OpenCV in Visual Studio. 
-- ![](imgs/vc++.png)
+- ![](meta/vc++.png)
 
 3. Add `opencv_world4xx.lib` to your linker input (`opencv_world4xxd.lib` for debug configuration).
-- ![](imgs/linker.png)
+- ![](meta/linker.png)
 
 
 ## License

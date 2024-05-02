@@ -138,20 +138,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Database.cpp" />
-    <ClCompile Include="Face.cpp" />
-    <ClCompile Include="ObjectDetector.cpp" />
-    <ClCompile Include="Image.cpp" />
-    <ClCompile Include="ImageProcessor.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Database.cpp" />
+    <ClCompile Include="src\Face.cpp" />
+    <ClCompile Include="src\ObjectDetector.cpp" />
+    <ClCompile Include="src\Image.cpp" />
+    <ClCompile Include="src\ImageProcessor.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cvui.h" />
-    <ClInclude Include="Database.h" />
-    <ClInclude Include="Face.h" />
-    <ClInclude Include="ObjectDetector.h" />
-    <ClInclude Include="Image.h" />
-    <ClInclude Include="ImageProcessor.h" />
+    <ClInclude Include="src\cvui.h" />
+    <ClInclude Include="src\Database.h" />
+    <ClInclude Include="src\Face.h" />
+    <ClInclude Include="src\ObjectDetector.h" />
+    <ClInclude Include="src\Image.h" />
+    <ClInclude Include="src\ImageProcessor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

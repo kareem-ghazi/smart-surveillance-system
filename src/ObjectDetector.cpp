@@ -88,7 +88,7 @@ string ObjectDetector::recognize(Image image)
 	//image.setImageMatrix(ImageProcessor::grayscale(image).getImageMatrix());
 	model->predict(image.getImageMatrix(), id, confidence);
 
-	cout << confidence << endl;
+	//cout << confidence << endl;
 
 	if (confidence >= 5500)
 	{

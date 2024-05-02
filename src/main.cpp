@@ -38,7 +38,7 @@ Image imageHist;
 vector<Rect> faces;
 vector<string> labels;
 Database database;
-ObjectDetector faceDetector("Resources/haarcascade_frontalface_default.xml", database);
+ObjectDetector faceDetector("./data/haarcascade_frontalface_default.xml", database);
 
 Image images[10];
 bool webcamOn = true;

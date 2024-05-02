@@ -63,7 +63,7 @@ void Database::loadEntries()
 	cv::glob(".\\data", files);
 
     for (const auto& file : files) {
-		if (file == ".\\data\\count.txt" || file == ".\\data\\eigenface.yml")
+		if (file == ".\\data\\count.txt" || file == ".\\data\\eigenface.yml" || file == ".\\data\\haarcascade_frontalface_default.xml")
 		{
 			continue;
 		}

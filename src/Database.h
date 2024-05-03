@@ -29,6 +29,6 @@ public:
 
 	void addEntry(string name, Image images[10]);
 	void loadEntries();
-	void deleteEntry(string name);
+	bool deleteEntry(string name);
 };
 

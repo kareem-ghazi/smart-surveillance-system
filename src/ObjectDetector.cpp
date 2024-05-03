@@ -66,6 +66,11 @@ void ObjectDetector::trainModel()
 {
 	database.loadEntries();
 	
+	if (database.getIDs().empty())
+	{
+		return;
+	}
+
 	model->train(database.getMatrices(), database.getIDs());
 	model->save("./data/eigenface.yml");
 }
@@ -90,7 +95,7 @@ string ObjectDetector::recognize(Image image)
 
 	//cout << confidence << endl;
 
-	if (confidence >= 5500)
+	if (confidence >= 3750)
 	{
 		return "";
 	}

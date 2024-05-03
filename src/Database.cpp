@@ -50,6 +50,29 @@ void Database::addEntry(string label, Image images[10])
 	ofstream oCount("./data/count.txt");
 	oCount << ++dbCount;
 	oCount.close();
+
+	loadEntries();
+}
+
+bool Database::deleteEntry(string name)
+{
+	for (int i = 0; i < labels.size(); i++)
+	{
+		if (labels[i] == name)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				string image = this->databasePath + "/" + labels[i] + "_" + to_string(i) + "_" + to_string(j) + ".jpg";
+				
+				const char* cImage = image.c_str();
+				remove(cImage);
+			}
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Database::loadEntries()
@@ -82,8 +105,6 @@ void Database::loadEntries()
 		label = fileName.substr(filepathDelimeter.length(), position - filepathDelimeter.length());
 		fileName.erase(0, position + 1);
 
-		//cout << label << endl;
-		
 		position = fileName.find(delimiter);
 		id = stoi(fileName.substr(0, position));
 

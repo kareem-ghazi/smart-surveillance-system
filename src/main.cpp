@@ -19,24 +19,21 @@
 #define WINDOW3_NAME "Add a person"
 #define WINDOW4_NAME "Remove a person"
 
-using namespace cv;
-using namespace std;
-
-void createGUI(Mat& originalFrame, VideoCapture& capture, int faceCount);
-void createInformationComponent(Mat& frame, int faceCount);
-void createSettingsComponent(Mat& frame, VideoCapture& capture);
+void createGUI(cv::Mat& originalFrame, cv::VideoCapture& capture, int faceCount);
+void createInformationComponent(cv::Mat& frame, int faceCount);
+void createSettingsComponent(cv::Mat& frame, cv::VideoCapture& capture);
 bool addEntry();
 bool removeEntry();
 void openWindow(const cv::String& name);
 void closeWindow(const cv::String& name);
 
-Mat imageMatrix;
+cv::Mat imageMatrix;
 Image image;
 Image copyImage;
 Image imageGray;
 Image imageHist;
-vector<Rect> faces;
-vector<string> labels;
+std::vector<cv::Rect> faces;
+std::vector<std::string> labels;
 Database database;
 ObjectDetector faceDetector("./data/haarcascade_frontalface_default.xml", database);
 
@@ -46,12 +43,12 @@ bool isRunning = true;
 bool fpsCounter = false;
 int faceCounter = 1;
 int fps = 30; // fake fps counter as apparently, CAP_DSHOW + fps detection doesn't work in OpenCV.
-string name;
+std::string name;
 bool isAdding = false;
 bool isRemoving = false;
 
 int main() {
-	VideoCapture cap(0, CAP_DSHOW); // CAP_DSHOW api for faster camera opening & closing.
+	cv::VideoCapture cap(0, cv::CAP_DSHOW); // CAP_DSHOW api for faster camera opening & closing.
 
 	// Initialize the two GUIs.
 	const cv::String windows[] = { WINDOW1_NAME, WINDOW2_NAME };
@@ -59,7 +56,7 @@ int main() {
 
 	while (cv::getWindowProperty(WINDOW2_NAME, 0) >= 0 && cv::getWindowProperty(WINDOW1_NAME, 0) >= 0)
 	{
-		Mat GUIFrame(330, 450, CV_8UC3, cv::Scalar(49, 52, 49));
+		cv::Mat GUIFrame(330, 450, CV_8UC3, cv::Scalar(49, 52, 49));
 
 		// In case the webcam is closed, just show an empty window with nothing in it.
 		if (!cap.isOpened())
@@ -69,7 +66,7 @@ int main() {
 
 			cvui::imshow(WINDOW2_NAME, GUIFrame);
 
-			Mat imageMatrix(480, 640, CV_8UC3, Scalar(49, 52, 49));
+			cv::Mat imageMatrix(480, 640, CV_8UC3, cv::Scalar(49, 52, 49));
 			cvui::imshow(WINDOW1_NAME, imageMatrix);
 
 			if (cv::waitKey(1) == 27 || !isRunning) {
@@ -101,7 +98,7 @@ int main() {
 			Image croppedImage = ImageProcessor::crop(imageHist, faces[i].tl(), faces[i].br());
 			Image face = ImageProcessor::resize(croppedImage, 128, 128);
 
-			string label = faceDetector.recognize(face);
+			std::string label = faceDetector.recognize(face);
 
 			// If a label exists for the face, put it inside the vector.
 			if (!label.empty())
@@ -146,12 +143,12 @@ int main() {
 }
 
 // Creates a graphical user interface for interacting with the system. Includes system information & settings.
-void createGUI(Mat& frame, VideoCapture& capture, int faceCount)
+void createGUI(cv::Mat& frame, cv::VideoCapture& capture, int faceCount)
 {
 	// Double buffer because apparently, this is known issue in dealing with graphics.
 	// However, I have absolutely no clue or understand the concept behind double buffers.
-	Mat copyFrame = frame.clone();
-	Mat doubleBuffer = copyFrame.clone();
+	cv::Mat copyFrame = frame.clone();
+	cv::Mat doubleBuffer = copyFrame.clone();
 
 	doubleBuffer.copyTo(frame);
 
@@ -167,7 +164,7 @@ void createGUI(Mat& frame, VideoCapture& capture, int faceCount)
 }
 
 // Creates information 'window' component inside of the specified window.
-void createInformationComponent(Mat& frame, int faceCount)
+void createInformationComponent(cv::Mat& frame, int faceCount)
 {
 	cvui::window(frame, 20, 20, 210, 240, "Information");
 
@@ -191,7 +188,7 @@ void createInformationComponent(Mat& frame, int faceCount)
 	// For each face label,
 	// if the label is empty, add to unknownFaces.
 	// otherwise, add to knownFaces and update the currently detected with that face label.
-	for (string label : labels)
+	for (std::string label : labels)
 	{
 		if (label.empty())
 		{
@@ -219,7 +216,7 @@ void createInformationComponent(Mat& frame, int faceCount)
 }
 
 // Creates settings 'window' component inside of the specified window.
-void createSettingsComponent(Mat& frame, VideoCapture& capture)
+void createSettingsComponent(cv::Mat& frame, cv::VideoCapture& capture)
 {
 	cvui::window(frame, frame.cols - 200, 20, 180, 240, "Settings");
 	cvui::checkbox(frame, frame.cols - 185, 55, "Webcam", &webcamOn);
@@ -227,7 +224,7 @@ void createSettingsComponent(Mat& frame, VideoCapture& capture)
 	// Whether the webcam is actually on and the checkbox for the Webcam is checked.
 	if (webcamOn && !capture.isOpened())
 	{
-		capture.open(0, CAP_DSHOW);
+		capture.open(0, cv::CAP_DSHOW);
 	}
 	else if (!webcamOn && capture.isOpened())
 	{
@@ -240,7 +237,7 @@ void createSettingsComponent(Mat& frame, VideoCapture& capture)
 	// NOTE: Doesn't work due to CAP_DSHOW api doesn't allow fps detection.
 	if (fpsCounter && webcamOn)
 	{
-		ImageProcessor::putText(image, 10, 20, 'G', 0.6, to_string(fps));
+		ImageProcessor::putText(image, 10, 20, 'G', 0.6, std::to_string(fps));
 	}
 	else {
 		fpsCounter = false;
@@ -248,11 +245,11 @@ void createSettingsComponent(Mat& frame, VideoCapture& capture)
 
 	cvui::printf(frame, frame.cols - 185, 125, 0.4, 0xcccccc, "Adds a new person.");
 	// When the add button is pressed.
-	if (cvui::button(frame, frame.cols - 185, 145, "Add")) {
+	if (cvui::button(frame, frame.cols - 185, 145, "Add") && webcamOn) {
 		system("cls");
-		cout << "Enter the person's name: ";
+		std::cout << "Enter the person's name: ";
 
-		cin >> name;
+		std::cin >> name;
 
 		openWindow(WINDOW3_NAME);
 		isAdding = addEntry();
@@ -266,11 +263,11 @@ void createSettingsComponent(Mat& frame, VideoCapture& capture)
 
 	// When the remove button is pressed.
 	cvui::printf(frame, frame.cols - 185, 195, 0.4, 0xcccccc, "Removes a person.");
-	if (cvui::button(frame, frame.cols - 185, 215, "Remove")) {
+	if (cvui::button(frame, frame.cols - 185, 215, "Remove") && webcamOn) {
 		system("cls");
-		cout << "Enter the person's name: ";
+		std::cout << "Enter the person's name: ";
 
-		cin >> name;
+		std::cin >> name;
 
 		openWindow(WINDOW4_NAME);
 		isRemoving = removeEntry();
@@ -288,7 +285,7 @@ bool addEntry()
 {
 	cvui::context(WINDOW3_NAME);
 
-	Mat addEntryGUI = Mat(90, 385, CV_8UC3);
+	cv::Mat addEntryGUI = cv::Mat(90, 385, CV_8UC3);
 	addEntryGUI = cv::Scalar(1, 31, 20);
 
 	cvui::printf(addEntryGUI, 25, 20, 0.4, 0x00ff00, "Press the record button to record your face. (%d/10)", faceCounter);
@@ -325,7 +322,7 @@ bool removeEntry()
 {
 	cvui::context(WINDOW4_NAME);
 
-	Mat removeSuccess = Mat(90, 350, CV_8UC3);;
+	cv::Mat removeSuccess = cv::Mat(90, 350, CV_8UC3);
 
 	// shit code. 
 	// why delete every entry at the loading of each frame again if you did it once? 

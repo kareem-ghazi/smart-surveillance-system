@@ -8,9 +8,6 @@
 #include <iostream>
 #include "Image.h"
 
-using namespace std;
-using namespace cv;
-
 static class ImageProcessor
 {
 private:
@@ -20,11 +17,11 @@ public:
 	static Image grayscale(Image image);
 	static Image equalizeHistogram(Image image);
 	static Image resize(Image image, int width, int height);
-	static Image crop(Image image, Point2i pointOne, Point2i pointTwo);
+	static Image crop(Image image, cv::Point2i pointOne, cv::Point2i pointTwo);
 
-	static void drawRectangle(Image& image, Point pointOne, Point pointTwo, char rectColor);
+	static void drawRectangle(Image& image, cv::Point pointOne, cv::Point pointTwo, char rectColor);
 	static void putText(Image& image, int theX, int theY, 
-		char fontColor, double fontScale, string text);
+		char fontColor, double fontScale, std::string text);
 };
 
 #endif

@@ -8,26 +8,23 @@
 #include <iostream>
 #include "Image.h"
 
-using namespace std;
-using namespace cv;
-
 class Face
 {
 private:
-	Mat faceMatrix;
-	string faceLabel;
+	cv::Mat faceMatrix;
+	std::string faceLabel;
 	int faceID;
 	
 	int generateFaceID();
 
 public:
-	Face(Mat faceMatrix);
-	Face(Mat faceMatrix, string faceLabel);
+	Face(cv::Mat faceMatrix);
+	Face(cv::Mat faceMatrix, std::string faceLabel);
 
-	Mat getFaceMatrix() const;
-	void setFaceMatrix(Mat getFaceMatrix);
-	string getFaceLabel() const;
-	void setFaceLabel(string faceLabel);
+	cv::Mat getFaceMatrix() const;
+	void setFaceMatrix(cv::Mat getFaceMatrix);
+	std::string getFaceLabel() const;
+	void setFaceLabel(std::string faceLabel);
 };
 
 #endif

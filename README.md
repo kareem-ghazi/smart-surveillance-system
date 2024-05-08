@@ -16,6 +16,16 @@ Some of the features currently implemented are:
 - Adding people to the system.
 - Removing people from the system. 
 
+## Roadmap
+
+These are some of the missing or uncomplete features for the project.
+
+- Better exception handling and code coverage.
+- Compiled version must include `opencv` dll.
+- Showing and hiding the console when dealing with input.
+- Eigenface.yml becomes read only when creating it for the first time.
+- String input isn't sanatized (*could write literally anything*).
+
 ## Screenshots
 
 ![](meta/screenshot.png)

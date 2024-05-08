@@ -7,20 +7,17 @@
 
 #include <iostream>
 
-using namespace std;
-using namespace cv;
-
 class Image
 {
 private:
-	Mat imageMatrix;
+	cv::Mat imageMatrix;
 
 public:
 	Image();
-	Image(Mat imageMatrix);
+	Image(cv::Mat imageMatrix);
 
-	Mat getImageMatrix() const;
-	void setImageMatrix(Mat imageMatrix);
+	cv::Mat getImageMatrix() const;
+	void setImageMatrix(cv::Mat imageMatrix);
 };
 
 #endif

@@ -15,23 +15,20 @@
 #include "Face.h"
 #include "Database.h"
 
-using namespace std;
-using namespace cv;
-
 class ObjectDetector
 {
 private:
-	Ptr<face::EigenFaceRecognizer> model = face::EigenFaceRecognizer::create();
-	CascadeClassifier objectCascade;
+	cv::Ptr<cv::face::EigenFaceRecognizer> model = cv::face::EigenFaceRecognizer::create();
+	cv::CascadeClassifier objectCascade;
 	Database database;
 
 public:
-	ObjectDetector(string cascadePath);
-	ObjectDetector(string cascadePath, Database database);
+	ObjectDetector(std::string cascadePath);
+	ObjectDetector(std::string cascadePath, Database database);
 
-	void detect(Image image, vector<Rect> &objects);
+	void detect(Image image, std::vector<cv::Rect> &objects);
 	void trainModel();
-	string recognize(Image image);
+	std::string recognize(Image image);
 };
 
 #endif

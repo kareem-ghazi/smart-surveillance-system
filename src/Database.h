@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DATABASE_H
+#define DATABASE_H
+
 #include <direct.h>
 #include <iostream>
 #include <fstream>
@@ -6,29 +8,27 @@
 
 #include "Image.h"
 
-using namespace std;
-using namespace cv;
-
 class Database
 {
 private:
-	string databasePath;
-	vector<int> ids;
-	vector<cv::String> labels;
-	vector<Image> images;
-	vector<Mat> matrices;
+	std::string databasePath;
+	std::vector<int> ids;
+	std::vector<cv::String> labels;
+	std::vector<Image> images;
+	std::vector<cv::Mat> matrices;
 
 public:
 	Database();
-	Database(string databasePath);
+	Database(std::string databasePath);
 
-	vector<int> getIDs() const;
-	vector<cv::String> getLabels() const;
-	vector<Image> getImages() const;
-	vector<Mat> getMatrices() const;
+	std::vector<int> getIDs() const;
+	std::vector<cv::String> getLabels() const;
+	std::vector<Image> getImages() const;
+	std::vector<cv::Mat> getMatrices() const;
 
-	void addEntry(string name, Image images[10]);
+	void addEntry(std::string name, Image images[10]);
 	void loadEntries();
-	bool deleteEntry(string name);
+	bool deleteEntry(std::string name);
 };
 
+#endif

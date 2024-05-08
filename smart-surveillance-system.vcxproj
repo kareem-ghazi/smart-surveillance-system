@@ -139,7 +139,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Database.cpp" />
-    <ClCompile Include="src\Face.cpp" />
     <ClCompile Include="src\ObjectDetector.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\ImageProcessor.cpp" />
@@ -148,7 +147,6 @@
   <ItemGroup>
     <ClInclude Include="src\cvui.h" />
     <ClInclude Include="src\Database.h" />
-    <ClInclude Include="src\Face.h" />
     <ClInclude Include="src\ObjectDetector.h" />
     <ClInclude Include="src\Image.h" />
     <ClInclude Include="src\ImageProcessor.h" />

@@ -1,32 +1,32 @@
 #include "Face.h"
 
-Face::Face(Mat faceMatrix) : faceMatrix(faceMatrix)
+Face::Face(cv::Mat faceMatrix) : faceMatrix(faceMatrix)
 { 
 	this->faceID = generateFaceID();
 	this->faceLabel = "Face " + faceID;
 }
 
-Face::Face(Mat faceMatrix, string faceLabel) : faceMatrix(faceMatrix), faceLabel(faceLabel)
+Face::Face(cv::Mat faceMatrix, std::string faceLabel) : faceMatrix(faceMatrix), faceLabel(faceLabel)
 {
 	this->faceID = generateFaceID();
 }
 
-Mat Face::getFaceMatrix() const
+cv::Mat Face::getFaceMatrix() const
 {
 	return this->faceMatrix.clone();
 }
 
-void Face::setFaceMatrix(Mat faceMatrix)
+void Face::setFaceMatrix(cv::Mat faceMatrix)
 {
 	this->faceMatrix = faceMatrix.clone();
 }
 
-string Face::getFaceLabel() const
+std::string Face::getFaceLabel() const
 {
 	return this->faceLabel;
 }
 
-void Face::setFaceLabel(string faceLabel)
+void Face::setFaceLabel(std::string faceLabel)
 {
 	this->faceLabel = faceLabel;
 }

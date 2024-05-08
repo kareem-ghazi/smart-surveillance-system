@@ -1,60 +1,75 @@
 #include "Database.h"
 
+// Initializes database and reads entries.
 Database::Database()
 {
 	this->databasePath = "./data";
 	this->loadEntries();
 
-	/*ofstream dbCount("./count.txt");
-	dbCount << 0;*/
+	//std::ofstream dbCount("./data/count.txt");
+
+	//if (false) // doesn't exist
+	//{
+	//	dbCount << 0;
+	//}
+
+	//dbCount.close();
 }
 
-Database::Database(string databasePath)
+// Initializes a specific database using a file path.
+Database::Database(std::string databasePath)
 {
 	this->databasePath = databasePath;
 }
 
-vector<int> Database::getIDs() const
+// Gets the ids from the database.
+std::vector<int> Database::getIDs() const
 {
 	return ids;
 }
 
-vector<cv::String> Database::getLabels() const
+// Gets the labels from the database.
+std::vector<cv::String> Database::getLabels() const
 {
 	return labels;
 }
 
-vector<Image> Database::getImages() const
+// Gets the images from the database.
+std::vector<Image> Database::getImages() const
 {
 	return images;
 }
 
-vector<Mat> Database::getMatrices() const
+// Gets the image matrices from the database.
+std::vector<cv::Mat> Database::getMatrices() const
 {
 	return matrices;
 }
 
-void Database::addEntry(string label, Image images[10])
+// Adds an entry to the database given a label and 10 images.
+// NOTE: Images are preprocessed before given to this function.
+void Database::addEntry(std::string label, Image images[10])
 {
-	ifstream iCount("./data/count.txt");
+	std::ifstream iCount("./data/count.txt");
 	int dbCount;
 	iCount >> dbCount;
 	iCount.close();
 
 	for (int i = 0; i < 10; i++)
 	{
-		string path = this->databasePath + "/" + label + "_" + to_string(dbCount) + "_" + to_string(i) + ".jpg";
+		std::string path = this->databasePath + "/" + label + "_" + std::to_string(dbCount) + "_" + std::to_string(i) + ".jpg";
 		imwrite(path, images[i].getImageMatrix());
 	}
 
-	ofstream oCount("./data/count.txt");
+	std::ofstream oCount("./data/count.txt");
 	oCount << ++dbCount;
 	oCount.close();
 
 	loadEntries();
 }
 
-bool Database::deleteEntry(string name)
+// Deletes an entry from the database (if it exists).
+bool Database::deleteEntry(std::string name)
 {
 	for (int i = 0; i < labels.size(); i++)
 	{
@@ -62,7 +77,7 @@ bool Database::deleteEntry(string name)
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				string image = this->databasePath + "/" + labels[i] + "_" + to_string(i) + "_" + to_string(j) + ".jpg";
+				std::string image = this->databasePath + "/" + labels[i] + "_" + std::to_string(i) + "_" + std::to_string(j) + ".jpg";
 				
 				const char* cImage = image.c_str();
 				remove(cImage);
@@ -75,6 +90,7 @@ bool Database::deleteEntry(string name)
 	return false;
 }
 
+// Loads and updates entries from the database.
 void Database::loadEntries()
 {
 	images.clear();
@@ -97,7 +113,7 @@ void Database::loadEntries()
 		size_t position = 0;
 		std::string token;
 
-		string label;
+		std::string label;
 		int id;
 		std::string filepathDelimeter = ".\\data\\";
 
@@ -108,7 +124,7 @@ void Database::loadEntries()
 		position = fileName.find(delimiter);
 		id = stoi(fileName.substr(0, position));
 
-		Image image(imread(file, 0));
+		Image image(cv::imread(file, 0));
 
         images.push_back(image);
 		matrices.push_back(image.getImageMatrix());

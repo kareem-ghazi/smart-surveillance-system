@@ -1,7 +1,7 @@
 #include "ObjectDetector.h"
 
 // Initializes the object detector with the path to a cascade classifier.
-ObjectDetector::ObjectDetector(string cascadePath)
+ObjectDetector::ObjectDetector(std::string cascadePath)
 {
 	try
 	{
@@ -15,7 +15,7 @@ ObjectDetector::ObjectDetector(string cascadePath)
 			this->model->read("./data/eigenface.yml");
 		}
 		else {
-			cout << "Error: Couldn't create eigenface.yml. No data exists!" << endl;
+			std::cout << "Error: Couldn't create eigenface.yml. No data exists!" << std::endl;
 		}
 	}
 
@@ -23,12 +23,13 @@ ObjectDetector::ObjectDetector(string cascadePath)
 
 	if (this->objectCascade.empty())
 	{
-		cout << "Error: Cascade classifer does not exist." << endl;
+		std::cout << "Error: Cascade classifer does not exist." << std::endl;
 		assert(false);
 	}
 }
 
-ObjectDetector::ObjectDetector(string cascadePath, Database database)
+// Initializes object detector with a path to the cascade classifier and a database.
+ObjectDetector::ObjectDetector(std::string cascadePath, Database database)
 {
 	this->database = database;
 	
@@ -44,7 +45,7 @@ ObjectDetector::ObjectDetector(string cascadePath, Database database)
 			this->model->read("./data/eigenface.yml");
 		}
 		else {
-			cout << "Error: Couldn't create eigenface.yml. No data exists!" << endl;
+			std::cout << "Error: Couldn't create eigenface.yml. No data exists!" << std::endl;
 		}
 	}
 
@@ -52,16 +53,18 @@ ObjectDetector::ObjectDetector(string cascadePath, Database database)
 
 	if (this->objectCascade.empty())
 	{
-		cout << "Error: Cascade classifer does not exist." << endl;
+		std::cout << "Error: Cascade classifer does not exist." << std::endl;
 		assert(false);
 	}
 }
 
-void ObjectDetector::detect(Image image, vector<Rect> &objects)
+// Detects an object using the Cascade Classifer.
+void ObjectDetector::detect(Image image, std::vector<cv::Rect> &objects)
 {
-	this->objectCascade.detectMultiScale(image.getImageMatrix(), objects, 1.1, 10, 0 | CASCADE_SCALE_IMAGE, Size(20, 20));
+	this->objectCascade.detectMultiScale(image.getImageMatrix(), objects, 1.1, 10, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(20, 20));
 }
 
+// Trains an eigenface model with the entries in the database.
 void ObjectDetector::trainModel()
 {
 	database.loadEntries();
@@ -75,14 +78,11 @@ void ObjectDetector::trainModel()
 	model->save("./data/eigenface.yml");
 }
 
-/*
-* Recognize an image with a face.
-* 
-* Only works with a grayscale image that has a size of 127 x 127 pixels.
-*/
-string ObjectDetector::recognize(Image image)
+// Recognize an image with a face.
+// NOTE: Only works with a grayscale image that has a size of 127 x 127 pixels.
+std::string ObjectDetector::recognize(Image image)
 {
-	if (database.getIDs().empty()) // shit code!
+	if (database.getIDs().empty() || model.empty()) // shit code!
 	{
 		return "";
 	}
@@ -90,12 +90,9 @@ string ObjectDetector::recognize(Image image)
 	int id = -1;
 	double confidence = 0.0;
 
-	//image.setImageMatrix(ImageProcessor::grayscale(image).getImageMatrix());
 	model->predict(image.getImageMatrix(), id, confidence);
 
-	//cout << confidence << endl;
-
-	if (confidence >= 3750)
+	if (confidence >= 4000)
 	{
 		return "";
 	}

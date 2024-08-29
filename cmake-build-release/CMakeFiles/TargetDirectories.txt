@@ -1,3 +1,0 @@
-C:/Users/kareemghazi/CLionProjects/smart-surveillance-system/cmake-build-release/CMakeFiles/smart_surveillance_system.dir
-C:/Users/kareemghazi/CLionProjects/smart-surveillance-system/cmake-build-release/CMakeFiles/edit_cache.dir
-C:/Users/kareemghazi/CLionProjects/smart-surveillance-system/cmake-build-release/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,9 @@
+# ninja log v6
+3	134	7466646162874454	build.ninja	3cfbacabdc79db5e
+18	1056	7466645745423993	CMakeFiles/smart_surveillance_system.dir/src/ObjectDetector.cpp.obj	8d190605f9b58925
+2	1112	7466645745263823	CMakeFiles/smart_surveillance_system.dir/src/Database.cpp.obj	1fd3dc3a8d8d50a7
+9	805	7466645745328820	CMakeFiles/smart_surveillance_system.dir/src/Image.cpp.obj	b5436ef1e58cc906
+12	823	7466645745353087	CMakeFiles/smart_surveillance_system.dir/src/ImageProcessor.cpp.obj	111ecbb6981d89ac
+5	835	7466645745284023	CMakeFiles/smart_surveillance_system.dir/src/Face.cpp.obj	452ee05ecf04a01f
+15	2312	7466645745387974	CMakeFiles/smart_surveillance_system.dir/src/main.cpp.obj	d4234cfdcb86502c
+2313	2412	7466645768368820	smart_surveillance_system.exe	d9322b11d5606252

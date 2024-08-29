@@ -36,3 +36,6 @@
 /data
 /gitcrap.cpp
 /SSS/data
+.idea
+/cmake-build-release/
+/cmake-build-debug/

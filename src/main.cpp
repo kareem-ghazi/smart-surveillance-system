@@ -37,7 +37,6 @@ ObjectDetector faceDetector("./data/haarcascade_frontalface_default.xml", databa
 
 cv::Mat images[10];
 bool webcamOn = true;
-bool isRunning = true;
 bool fpsCounter = false;
 int faceCounter = 1;
 int fps = 30; // fake fps counter as apparently, CAP_DSHOW + fps detection doesn't work in OpenCV.
@@ -52,7 +51,7 @@ int main() {
 	const cv::String windows[] = { WINDOW1_NAME, WINDOW2_NAME };
 	cvui::init(windows, 2);
 
-	while (cv::getWindowProperty(WINDOW2_NAME, 0) >= 0 && cv::getWindowProperty(WINDOW1_NAME, 0) >= 0)
+	while (cv::getWindowProperty(WINDOW1_NAME, cv::WND_PROP_VISIBLE) > 0 && cv::getWindowProperty(WINDOW2_NAME, cv::WND_PROP_VISIBLE) > 0)
 	{
 		cv::Mat GUIFrame(330, 450, CV_8UC3, cv::Scalar(49, 52, 49));
 
@@ -67,7 +66,7 @@ int main() {
 			cv::Mat imageMatrix(480, 640, CV_8UC3, cv::Scalar(49, 52, 49));
 			cvui::imshow(WINDOW1_NAME, imageMatrix);
 
-			if (cv::waitKey(1) == 27 || !isRunning) {
+			if (cv::waitKey(1) == 27) {
 				break;
 			}
 
@@ -127,7 +126,7 @@ int main() {
 		cvui::imshow(WINDOW2_NAME, GUIFrame);
 
 		// Check whether ESC has been pressed or whether the program has been closed.
-		if (cv::waitKey(1) == 27 || !isRunning) {
+		if (cv::waitKey(1) == 27) {
 			break;
 		}
 	}
@@ -146,10 +145,6 @@ void createGUI(cv::Mat& frame, cv::VideoCapture& capture, int faceCount)
 //	cv::Mat doubleBuffer = copyFrame.clone();
 //
 //	doubleBuffer.copyTo(frame);
-
-	if (cvui::button(frame, frame.cols - 90, frame.rows - 40, "Quit")) {
-		isRunning = false;
-	}
 
 	createInformationComponent(frame, faceCount);
 	createSettingsComponent(frame, capture);

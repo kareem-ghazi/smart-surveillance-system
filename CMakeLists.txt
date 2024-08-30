@@ -12,12 +12,6 @@ add_executable(smart_surveillance_system
         src/cvui.h
         src/Database.cpp
         src/Database.h
-        src/Face.cpp
-        src/Face.h
-        src/Image.cpp
-        src/Image.h
-        src/ImageProcessor.cpp
-        src/ImageProcessor.h
         src/main.cpp
         src/ObjectDetector.cpp
         src/ObjectDetector.h)

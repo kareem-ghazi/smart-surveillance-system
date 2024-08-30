@@ -35,7 +35,7 @@ std::vector<cv::String> Database::getLabels() const
 }
 
 // Gets the images from the database.
-std::vector<Image> Database::getImages() const
+std::vector<cv::Mat> Database::getImages() const
 {
 	return images;
 }
@@ -48,7 +48,7 @@ std::vector<cv::Mat> Database::getMatrices() const
 
 // Adds an entry to the database given a label and 10 images.
 // NOTE: Images are preprocessed before given to this function.
-void Database::addEntry(std::string label, Image images[10])
+void Database::addEntry(std::string label, cv::Mat images[10])
 {
 	std::ifstream iCount("./data/count.txt");
 	int dbCount;
@@ -58,7 +58,7 @@ void Database::addEntry(std::string label, Image images[10])
 	for (int i = 0; i < 10; i++)
 	{
 		std::string path = this->databasePath + "/" + label + "_" + std::to_string(dbCount) + "_" + std::to_string(i) + ".jpg";
-		imwrite(path, images[i].getImageMatrix());
+		imwrite(path, images[i]);
 	}
 
 	std::ofstream oCount("./data/count.txt");
@@ -124,15 +124,16 @@ void Database::loadEntries()
 		position = fileName.find(delimiter);
 		id = stoi(fileName.substr(0, position));
 
-		Image image(cv::imread(file, 0));
+		cv::Mat image(cv::imread(file, 0));
 
         images.push_back(image);
-		matrices.push_back(image.getImageMatrix());
+		matrices.push_back(image);
 		
 		if (labels.capacity() <= id)
 		{
 			labels.resize(id + 1);
 		}
+
 		labels[id] = label;
 
 		ids.push_back(id);

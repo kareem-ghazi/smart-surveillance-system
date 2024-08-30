@@ -10,7 +10,6 @@
 #include <iostream>
 #include <windows.h>
 
-#include "ImageProcessor.h"
 #include "ObjectDetector.h"
 #include "Database.h"
 
@@ -28,16 +27,15 @@ void openWindow(const cv::String& name);
 void closeWindow(const cv::String& name);
 
 cv::Mat imageMatrix;
-Image image;
-Image copyImage;
-Image imageGray;
-Image imageHist;
+cv::Mat copyImage;
+cv::Mat imageGray;
+cv::Mat imageHist;
 std::vector<cv::Rect> faces;
 std::vector<std::string> labels;
 Database database;
 ObjectDetector faceDetector("./data/haarcascade_frontalface_default.xml", database);
 
-Image images[10];
+cv::Mat images[10];
 bool webcamOn = true;
 bool isRunning = true;
 bool fpsCounter = false;
@@ -78,14 +76,12 @@ int main() {
 
 		// Capture the frame from the camera and make a copy from it.
 		cap >> imageMatrix;
-		image.setImageMatrix(imageMatrix);
-		copyImage.setImageMatrix(imageMatrix);
 
 		// Preprocess original image for easier detection and recognition.
-		imageGray = ImageProcessor::grayscale(image);
-		imageHist = ImageProcessor::equalizeHistogram(imageGray);
+        cvtColor(imageMatrix, imageGray, cv::COLOR_BGR2GRAY);
+        equalizeHist(imageGray, imageHist);
 
-		faceDetector.detect(imageGray, faces);
+		faceDetector.detect(imageGray, faces); //!!!!
 
 		// Labels vector is used for storing the known and unknown faces.
 		// This allows for the display of information by the Settings & Information GUI accurately.
@@ -95,32 +91,31 @@ int main() {
 		for (int i = 0; i < faces.size(); i++)
 		{
 			// Preprocess faces for facial recognition.
-			Image croppedImage = ImageProcessor::crop(imageHist, faces[i].tl(), faces[i].br());
-			Image face = ImageProcessor::resize(croppedImage, 128, 128);
+            cv::Rect ROI(faces[i].tl(), faces[i].br());
+            cv::Mat face;
 
-			std::string label = faceDetector.recognize(face);
+            cv::resize(imageHist(ROI), face, cv::Size(128, 128), 0, 0, cv::INTER_LINEAR);
+
+			std::string label = faceDetector.recognize(face); //!!!!
 
 			// If a label exists for the face, put it inside the vector.
 			if (!label.empty())
 			{
 				labels.at(i) = label;
 			}
-			
-			// Draws a rectangle around each detected face.
-			ImageProcessor::drawRectangle(image, faces[i].tl(), faces[i].br(), 
-				(label.empty() ? 'R' : 'G'));
 
-			if (label.empty())
-			{
-				continue;
-			}
+            // Calculate the position of the text using the rectangular coordinates of each face.
+            int pos_x = max(faces[i].tl().x, 0);
+            int pos_y = max(faces[i].tl().y - 10, 0);
 
-			// Calculate the position of the text using the rectangular coordinates of each face.
-			int pos_x = max(faces[i].tl().x, 0);
-			int pos_y = max(faces[i].tl().y - 10, 0);
-
-			ImageProcessor::putText(image, pos_x, pos_y, (label.empty() ? 'R' : 'G'), 
-				0.75, label);
+            if (label.empty())
+            {
+                cv::rectangle(imageMatrix, faces[i].tl(), faces[i].br(), cv::Scalar(0, 0, 255), 2, 8, 0);
+                continue;
+            } else {
+                cv::rectangle(imageMatrix, faces[i].tl(), faces[i].br(), cv::Scalar(0, 255, 0), 2, 8, 0);
+                cv::putText(imageMatrix, label, cv::Point(pos_x, pos_y), cv::FONT_HERSHEY_DUPLEX, 0.75, cv::Scalar(0, 255, 0), 1.0);
+            }
 		}
 
 		// Creation of the Settings & Information GUI.
@@ -128,7 +123,7 @@ int main() {
 		createGUI(GUIFrame, cap, faces.size());
 
 		// Updates the Camera and the Settings & Information GUIs.
-		cvui::imshow(WINDOW1_NAME, image.getImageMatrix());
+		cvui::imshow(WINDOW1_NAME, imageMatrix);
 		cvui::imshow(WINDOW2_NAME, GUIFrame);
 
 		// Check whether ESC has been pressed or whether the program has been closed.
@@ -145,12 +140,12 @@ int main() {
 // Creates a graphical user interface for interacting with the system. Includes system information & settings.
 void createGUI(cv::Mat& frame, cv::VideoCapture& capture, int faceCount)
 {
-	// Double buffer because apparently, this is known issue in dealing with graphics.
-	// However, I have absolutely no clue or understand the concept behind double buffers.
-	cv::Mat copyFrame = frame.clone();
-	cv::Mat doubleBuffer = copyFrame.clone();
-
-	doubleBuffer.copyTo(frame);
+//	// Double buffer because apparently, this is known issue in dealing with graphics.
+//	// However, I have absolutely no clue or understand the concept behind double buffers.
+//	cv::Mat copyFrame = frame.clone();
+//	cv::Mat doubleBuffer = copyFrame.clone();
+//
+//	doubleBuffer.copyTo(frame);
 
 	if (cvui::button(frame, frame.cols - 90, frame.rows - 40, "Quit")) {
 		isRunning = false;
@@ -237,8 +232,8 @@ void createSettingsComponent(cv::Mat& frame, cv::VideoCapture& capture)
 	// NOTE: Doesn't work due to CAP_DSHOW api doesn't allow fps detection.
 	if (fpsCounter && webcamOn)
 	{
-		ImageProcessor::putText(image, 10, 20, 'G', 0.6, std::to_string(fps));
-	}
+        cv::putText(imageMatrix, std::to_string(fps), cv::Point(10, 20), cv::FONT_HERSHEY_DUPLEX, 0.6, cv::Scalar(0, 255, 0), 1.0);
+    }
 	else {
 		fpsCounter = false;
 	}
@@ -293,8 +288,10 @@ bool addEntry()
 	// When the record button is pressed and there are faces,
 	// the image is processed and added to the array of faces.
 	if (cvui::button(addEntryGUI, 145, 45, "Record") && faces.size() == 1) {
-		Image croppedImage = ImageProcessor::crop(copyImage, faces[0].tl(), faces[0].br());
-		Image face = ImageProcessor::resize(croppedImage, 128, 128);
+        cv::Rect ROI(faces[0].tl(), faces[0].br());
+        cv::Mat face;
+
+        cv::resize(imageHist(ROI), face, cv::Size(128, 128), 0, 0, cv::INTER_LINEAR);
 
 		images[faceCounter - 1] = face;
 		faceCounter++;

@@ -10,9 +10,6 @@
 #include <iostream>
 #include <cassert>
 
-#include "Image.h"
-#include "ImageProcessor.h"
-#include "Face.h"
 #include "Database.h"
 
 class ObjectDetector
@@ -26,9 +23,9 @@ public:
 	ObjectDetector(std::string cascadePath);
 	ObjectDetector(std::string cascadePath, Database database);
 
-	void detect(Image image, std::vector<cv::Rect> &objects);
+	void detect(cv::Mat image, std::vector<cv::Rect> &objects);
 	void trainModel();
-	std::string recognize(Image image);
+	std::string recognize(cv::Mat image);
 };
 
 #endif

@@ -59,9 +59,9 @@ ObjectDetector::ObjectDetector(std::string cascadePath, Database database)
 }
 
 // Detects an object using the Cascade Classifer.
-void ObjectDetector::detect(Image image, std::vector<cv::Rect> &objects)
+void ObjectDetector::detect(cv::Mat image, std::vector<cv::Rect> &objects)
 {
-	this->objectCascade.detectMultiScale(image.getImageMatrix(), objects, 1.1, 10, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(20, 20));
+	this->objectCascade.detectMultiScale(image, objects, 1.1, 10, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(20, 20));
 }
 
 // Trains an eigenface model with the entries in the database.
@@ -80,7 +80,7 @@ void ObjectDetector::trainModel()
 
 // Recognize an image with a face.
 // NOTE: Only works with a grayscale image that has a size of 127 x 127 pixels.
-std::string ObjectDetector::recognize(Image image)
+std::string ObjectDetector::recognize(cv::Mat image)
 {
 	if (database.getIDs().empty() || model.empty()) // shit code!
 	{
@@ -90,7 +90,7 @@ std::string ObjectDetector::recognize(Image image)
 	int id = -1;
 	double confidence = 0.0;
 
-	model->predict(image.getImageMatrix(), id, confidence);
+	model->predict(image, id, confidence);
 
 	if (confidence >= 4000)
 	{

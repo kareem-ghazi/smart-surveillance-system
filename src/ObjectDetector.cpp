@@ -95,7 +95,7 @@ std::string ObjectDetector::recognize(cv::Mat image)
 		return "";
 	}
 
-	return database.getLabels().at(id);
+	return database.getLabels()[id];
 }
 
 

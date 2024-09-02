@@ -10,28 +10,27 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <map>
 
 class Database
 {
 private:
 	std::string databasePath;
 	std::vector<int> ids;
-	std::vector<cv::String> labels;
-	std::vector<cv::Mat> images;
+	std::map<int, cv::String> labels;
 	std::vector<cv::Mat> matrices;
 
 public:
 	Database();
-	Database(std::string databasePath);
+    Database(std::string databasePath);
 
 	std::vector<int> getIDs() const;
-	std::vector<cv::String> getLabels() const;
-	std::vector<cv::Mat> getImages() const;
+    std::map<int, cv::String> getLabels() const;
 	std::vector<cv::Mat> getMatrices() const;
 
 	void addEntry(std::string name, std::vector<cv::Mat> images);
     bool findEntry(std::string name);
-    int getEntryPosition(std::string name);
+    int getEntryID(std::string name);
 	void loadEntries();
 	void deleteEntry(std::string name);
 };

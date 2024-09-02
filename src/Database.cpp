@@ -29,15 +29,9 @@ std::vector<int> Database::getIDs() const
 }
 
 // Gets the labels from the database.
-std::vector<cv::String> Database::getLabels() const
+std::map<int, cv::String> Database::getLabels() const
 {
 	return labels;
-}
-
-// Gets the images from the database.
-std::vector<cv::Mat> Database::getImages() const
-{
-	return images;
 }
 
 // Gets the image matrices from the database.
@@ -71,11 +65,11 @@ void Database::addEntry(std::string label, std::vector<cv::Mat> images)
 // Deletes an entry from the database (if it exists).
 void Database::deleteEntry(std::string name)
 {
-    int position = getEntryPosition(name);
+    int id = getEntryID(name);
 
     for (int j = 0; j < 10; j++)
     {
-        std::string image = this->databasePath + "/" + labels[position] + "_" + std::to_string(position) + "_" + std::to_string(j) + ".jpg";
+        std::string image = this->databasePath + "/" + labels[id] + "_" + std::to_string(id) + "_" + std::to_string(j) + ".jpg";
 
         const char* cImage = image.c_str();
         remove(cImage);
@@ -84,18 +78,29 @@ void Database::deleteEntry(std::string name)
 
 bool Database::findEntry(std::string name)
 {
-    return std::distance(labels.begin(), std::find(labels.begin(), labels.end(), name)) != labels.size();
+    for (auto it = labels.begin(); it != labels.end(); ++it)
+    {
+        if (it->second == name)
+            return true;
+    }
+
+    return false;
 }
 
-int Database::getEntryPosition(std::string name)
+int Database::getEntryID(std::string name)
 {
-    return std::distance(labels.begin(), std::find(labels.begin(), labels.end(), name));
+    for (auto it = labels.begin(); it != labels.end(); ++it)
+    {
+        if (it->second == name)
+            return it->first;
+    }
+
+    return -1;
 }
 
 // Loads and updates entries from the database.
 void Database::loadEntries()
 {
-	images.clear();
     labels.clear();
 	ids.clear();
 	matrices.clear();
@@ -129,14 +134,7 @@ void Database::loadEntries()
 		cv::Mat matrix(cv::imread(file, 0));
 
 		matrices.push_back(matrix);
-		
-		if (labels.capacity() <= id)
-		{
-			labels.resize(id + 1);
-		}
-
 		labels[id] = label;
-
 		ids.push_back(id);
     }
 }

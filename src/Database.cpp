@@ -48,7 +48,7 @@ std::vector<cv::Mat> Database::getMatrices() const
 
 // Adds an entry to the database given a label and 10 images.
 // NOTE: Images are preprocessed before given to this function.
-void Database::addEntry(std::string label, cv::Mat images[10])
+void Database::addEntry(std::string label, std::vector<cv::Mat> images)
 {
 	std::ifstream iCount("./data/count.txt");
 	int dbCount;
@@ -69,25 +69,27 @@ void Database::addEntry(std::string label, cv::Mat images[10])
 }
 
 // Deletes an entry from the database (if it exists).
-bool Database::deleteEntry(std::string name)
+void Database::deleteEntry(std::string name)
 {
-	for (int i = 0; i < labels.size(); i++)
-	{
-		if (labels[i] == name)
-		{
-			for (int j = 0; j < 10; j++)
-			{
-				std::string image = this->databasePath + "/" + labels[i] + "_" + std::to_string(i) + "_" + std::to_string(j) + ".jpg";
-				
-				const char* cImage = image.c_str();
-				remove(cImage);
-			}
+    int position = getEntryPosition(name);
 
-			return true;
-		}
-	}
+    for (int j = 0; j < 10; j++)
+    {
+        std::string image = this->databasePath + "/" + labels[position] + "_" + std::to_string(position) + "_" + std::to_string(j) + ".jpg";
 
-	return false;
+        const char* cImage = image.c_str();
+        remove(cImage);
+    }
+}
+
+bool Database::findEntry(std::string name)
+{
+    return std::distance(labels.begin(), std::find(labels.begin(), labels.end(), name)) != labels.size();
+}
+
+int Database::getEntryPosition(std::string name)
+{
+    return std::distance(labels.begin(), std::find(labels.begin(), labels.end(), name));
 }
 
 // Loads and updates entries from the database.
@@ -124,10 +126,9 @@ void Database::loadEntries()
 		position = fileName.find(delimiter);
 		id = stoi(fileName.substr(0, position));
 
-		cv::Mat image(cv::imread(file, 0));
+		cv::Mat matrix(cv::imread(file, 0));
 
-        images.push_back(image);
-		matrices.push_back(image);
+		matrices.push_back(matrix);
 		
 		if (labels.capacity() <= id)
 		{

@@ -14,7 +14,9 @@ add_executable(smart_surveillance_system
         src/Database.h
         src/main.cpp
         src/ObjectDetector.cpp
-        src/ObjectDetector.h)
+        src/ObjectDetector.h
+        src/GUI.cpp
+        src/GUI.h)
 
 set(OpenCV_LIBS opencv_core opencv_imgproc opencv_highgui opencv_imgcodecs)
 

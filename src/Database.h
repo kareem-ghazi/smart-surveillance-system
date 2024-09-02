@@ -29,9 +29,11 @@ public:
 	std::vector<cv::Mat> getImages() const;
 	std::vector<cv::Mat> getMatrices() const;
 
-	void addEntry(std::string name, cv::Mat images[10]);
+	void addEntry(std::string name, std::vector<cv::Mat> images);
+    bool findEntry(std::string name);
+    int getEntryPosition(std::string name);
 	void loadEntries();
-	bool deleteEntry(std::string name);
+	void deleteEntry(std::string name);
 };
 
 #endif

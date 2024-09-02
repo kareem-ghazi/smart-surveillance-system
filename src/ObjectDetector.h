@@ -17,11 +17,12 @@ class ObjectDetector
 private:
 	cv::Ptr<cv::face::EigenFaceRecognizer> model = cv::face::EigenFaceRecognizer::create();
 	cv::CascadeClassifier objectCascade;
-	Database database;
+	Database& database;
 
 public:
+	ObjectDetector();
 	ObjectDetector(std::string cascadePath);
-	ObjectDetector(std::string cascadePath, Database database);
+	ObjectDetector(std::string cascadePath, Database& database);
 
 	void detect(cv::Mat image, std::vector<cv::Rect> &objects);
 	void trainModel();

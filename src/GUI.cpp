@@ -146,10 +146,9 @@ bool GUI::addEntry()
     cvui::context(WINDOW3_NAME);
     cv::Mat addEntryGUI = cv::Mat(90, 385, CV_8UC3, cv::Scalar(1, 31, 20));
 
-    static int faceCounter = 1;
-    static std::vector<cv::Mat> images(10);
+    static std::vector<cv::Mat> images;
 
-    cvui::printf(addEntryGUI, 25, 20, 0.4, 0x00ff00, "Press the record button to record your face. (%d/10)", faceCounter);
+    cvui::printf(addEntryGUI, 25, 20, 0.4, 0x00ff00, "Press the record button to record your face. (%d/10)", images.size() + 1);
     bool pressedRecord = cvui::button(addEntryGUI, 145, 45, "Record");
 
     cvui::imshow(WINDOW3_NAME, addEntryGUI);
@@ -162,16 +161,10 @@ bool GUI::addEntry()
 
     cvui::imshow(WINDOW3_NAME, addEntryGUI);
 
-    cv::Mat imageGray;
-    cv::Mat imageHist;
     capture >> imageMatrix;
-
-    // Preprocess original image for easier detection and recognition.
-    cvtColor(imageMatrix, imageGray, cv::COLOR_BGR2GRAY);
-    equalizeHist(imageGray, imageHist);
-
     std::vector<cv::Rect> faces;
-    faceDetector.detect(imageGray, faces);
+
+    faceDetector.detect(imageMatrix, faces);
 
     if (faces.size() != 1)
     {
@@ -181,20 +174,18 @@ bool GUI::addEntry()
     cv::Rect ROI(faces[0].tl(), faces[0].br());
     cv::Mat face;
 
-    cv::resize(imageHist(ROI), face, cv::Size(128, 128), 0, 0, cv::INTER_LINEAR);
+    cv::resize(imageMatrix(ROI), face, cv::Size(128, 128), 0, 0, cv::INTER_LINEAR);
 
-    images[faceCounter - 1] = face;
-    faceCounter++;
+    images.push_back(face);
 
     // If we got 10 faces, close the window, add the entry, and train a new model.
-    if (faceCounter == 11)
+    if (images.size() == 10)
     {
         closeWindow(WINDOW3_NAME);
         database.addEntry(name, images);
         faceDetector.trainModel();
 
-        faceCounter = 1;
-        images.clear();
+        images.resize(0);
         return false;
     }
 

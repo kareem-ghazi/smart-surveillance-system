@@ -56,6 +56,18 @@ ObjectDetector::ObjectDetector(std::string cascadePath, Database& database) : da
 	}
 }
 
+void ObjectDetector::process(cv::Mat& imageMatrix, std::vector<cv::Rect>& foundFaces)
+{
+    cv::Mat imageGray;
+    cv::Mat imageHist;
+
+    // Preprocess original image for easier detection and recognition.
+    cvtColor(imageMatrix, imageGray, cv::COLOR_BGR2GRAY);
+    equalizeHist(imageGray, imageHist);
+
+    detect(imageGray, foundFaces);
+}
+
 void ObjectDetector::process(cv::Mat& imageMatrix, std::vector<std::string>& foundLabels, std::vector<cv::Rect>& foundFaces)
 {
     cv::Mat imageGray;

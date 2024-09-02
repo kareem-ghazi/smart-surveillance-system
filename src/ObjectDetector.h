@@ -24,7 +24,8 @@ public:
 	ObjectDetector(std::string cascadePath);
 	ObjectDetector(std::string cascadePath, Database& database);
 
-    void process(cv::Mat& imageMatrix, std::vector<std::string>& labels, std::vector<cv::Rect>& faces);
+    void process(cv::Mat& imageMatrix, std::vector<cv::Rect>& foundFaces);
+    void process(cv::Mat& imageMatrix, std::vector<std::string>& foundLabels, std::vector<cv::Rect>& foundFaces);
 	void detect(cv::Mat image, std::vector<cv::Rect> &objects);
     std::string recognize(cv::Mat image);
 	void trainModel();

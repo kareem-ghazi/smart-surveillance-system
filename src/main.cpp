@@ -5,11 +5,10 @@
 #include "Database.h"
 #include "GUI.h"
 
-Database database;
-ObjectDetector faceDetector("./data/haarcascade_frontalface_default.xml", database);
-
 int main() {
     cv::VideoCapture cap(0, cv::CAP_DSHOW); // CAP_DSHOW api for faster camera opening & closing.
+    Database database;
+    ObjectDetector faceDetector("./data/haarcascade_frontalface_default.xml", database);
     GUI gui(cap, database, faceDetector);
 
 	while (cv::getWindowProperty(WINDOW2_NAME, cv::WND_PROP_VISIBLE) > 0)
@@ -23,7 +22,7 @@ int main() {
             std::vector<cv::Rect> foundFaces;
             std::vector<std::string> foundLabels;
 
-            // Capture the frame from the camera and make a copy from it.
+            // Capture the frame from the camera.
             cv::Mat imageMatrix;
             cap >> imageMatrix;
 

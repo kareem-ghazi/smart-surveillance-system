@@ -108,14 +108,12 @@ void GUI::renderSettingsComponent() {
     cvui::printf(matrix, matrix.cols - 185, 125, 0.4, 0xcccccc, "Adds a new person.");
     // When the add button is pressed.
     if (cvui::button(matrix, matrix.cols - 185, 145, "Add") && webcamOn) {
-        system("cls");
         std::cout << "Enter the person's name: ";
-
         std::cin >> name;
+        std::cout << std::endl;
 
         openWindow(WINDOW3_NAME);
         isAdding = addEntry();
-        system("cls");
     }
 
     if (isAdding)
@@ -126,10 +124,9 @@ void GUI::renderSettingsComponent() {
     // When the remove button is pressed.
     cvui::printf(matrix, matrix.cols - 185, 195, 0.4, 0xcccccc, "Removes a person.");
     if (cvui::button(matrix, matrix.cols - 185, 215, "Remove") && webcamOn) {
-        system("cls");
         std::cout << "Enter the person's name: ";
-
         std::cin >> name;
+        std::cout << std::endl;
 
         openWindow(WINDOW4_NAME);
         isRemoving = removeEntry();
@@ -199,9 +196,6 @@ bool GUI::removeEntry()
     cvui::context(WINDOW4_NAME);
     cv::Mat removeSuccess(90, 350, CV_8UC3);
 
-    // shit code.
-    // why delete every entry at the loading of each frame again if you did it once?
-    // guess i'll never know .-.
     bool found = database.findEntry(name);
 
     // Shows the status window depending on the what occured from the attempt to delete an entry.

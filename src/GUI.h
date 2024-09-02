@@ -3,10 +3,10 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "Database.h"
-#include "ObjectDetector.h"
 #include <string>
 #include <vector>
+#include "Database.h"
+#include "ObjectDetector.h"
 
 #define WINDOW1_NAME "Camera"
 #define WINDOW2_NAME "Settings & Information"

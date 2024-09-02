@@ -7,6 +7,7 @@
 
 int main() {
     cv::VideoCapture cap(0, cv::CAP_DSHOW); // CAP_DSHOW api for faster camera opening & closing.
+
     Database database;
     ObjectDetector faceDetector("./data/haarcascade_frontalface_default.xml", database);
     GUI gui(cap, database, faceDetector);

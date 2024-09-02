@@ -22,18 +22,18 @@ int main() {
             cv::Mat emptyMatrix(480, 640, CV_8UC3, cv::Scalar(49, 52, 49));
             gui.render(emptyMatrix);
 		} else {
-            std::vector<cv::Rect> faces;
-            std::vector<std::string> labels;
+            std::vector<cv::Rect> foundFaces;
+            std::vector<std::string> foundLabels;
 
             // Capture the frame from the camera and make a copy from it.
             cv::Mat imageMatrix;
             cap >> imageMatrix;
 
-            // Process for faces (if found) and their labels (if found) in each camera frame.
-            process(imageMatrix, labels, faces);
+            // Process for foundFaces (if found) and their foundLabels (if found) in each camera frame.
+            process(imageMatrix, foundLabels, foundFaces);
 
             // Render GUI components and the frames from the camera.
-            gui.render(imageMatrix, labels, faces.size());
+            gui.render(imageMatrix, foundLabels, foundFaces.size());
         }
 
 		// Check whether ESC has been pressed or whether the program has been closed.
@@ -47,7 +47,7 @@ int main() {
 	cv::destroyAllWindows();
 }
 
-void process(cv::Mat& imageMatrix, std::vector<std::string>& labels, std::vector<cv::Rect>& faces)
+void process(cv::Mat& imageMatrix, std::vector<std::string>& foundLabels, std::vector<cv::Rect>& foundFaces)
 {
     cv::Mat imageGray;
     cv::Mat imageHist;
@@ -56,39 +56,36 @@ void process(cv::Mat& imageMatrix, std::vector<std::string>& labels, std::vector
     cvtColor(imageMatrix, imageGray, cv::COLOR_BGR2GRAY);
     equalizeHist(imageGray, imageHist);
 
-    faceDetector.detect(imageGray, faces);
+    faceDetector.detect(imageGray, foundFaces);
 
     // Labels vector is used for storing the known and unknown faces.
     // This allows for the display of information by the Settings & Information GUI accurately.
-    labels.clear();
-    labels.resize(faces.size());
+    foundLabels.clear();
 
-    for (int i = 0; i < faces.size(); i++)
+    for (int i = 0; i < foundFaces.size(); i++)
     {
         // Preprocess faces for facial recognition.
-        cv::Rect ROI(faces[i].tl(), faces[i].br());
+        cv::Rect ROI(foundFaces[i].tl(), foundFaces[i].br());
         cv::Mat face;
 
         cv::resize(imageHist(ROI), face, cv::Size(128, 128), 0, 0, cv::INTER_LINEAR);
 
         std::string label = faceDetector.recognize(face);
 
-        // If a label exists for the face, put it inside the vector.
-        if (!label.empty())
-        {
-            labels.at(i) = label;
-        }
-
-        // Calculate the position of the text using the rectangular coordinates of each face.
-        int pos_x = std::max(faces[i].tl().x, 0);
-        int pos_y = std::max(faces[i].tl().y - 10, 0);
-
         if (label.empty())
         {
-            cv::rectangle(imageMatrix, faces[i].tl(), faces[i].br(), cv::Scalar(0, 0, 255), 2, 8, 0);
+            foundLabels.push_back("");
+
+            cv::rectangle(imageMatrix, foundFaces[i].tl(), foundFaces[i].br(), cv::Scalar(0, 0, 255), 2, 8, 0);
             continue;
         } else {
-            cv::rectangle(imageMatrix, faces[i].tl(), faces[i].br(), cv::Scalar(0, 255, 0), 2, 8, 0);
+            foundLabels.push_back(label);
+
+            // Calculate the position of the text using the rectangular coordinates of each face.
+            int pos_x = std::max(foundFaces[i].tl().x, 0);
+            int pos_y = std::max(foundFaces[i].tl().y - 10, 0);
+
+            cv::rectangle(imageMatrix, foundFaces[i].tl(), foundFaces[i].br(), cv::Scalar(0, 255, 0), 2, 8, 0);
             cv::putText(imageMatrix, label, cv::Point(pos_x, pos_y), cv::FONT_HERSHEY_DUPLEX, 0.75, cv::Scalar(0, 255, 0), 1.0);
         }
     }

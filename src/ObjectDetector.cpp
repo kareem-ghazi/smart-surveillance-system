@@ -1,33 +1,5 @@
 #include "ObjectDetector.h"
 
-//// Initializes the object detector with the path to a cascade classifier.
-//ObjectDetector::ObjectDetector(std::string cascadePath)
-//{
-//	try
-//	{
-//		this->model->read("./data/eigenface.yml");
-//	}
-//	catch (const std::exception&)
-//	{
-//		if (!database.getIDs().empty()) // shit code.
-//		{
-//			this->trainModel();
-//			this->model->read("./data/eigenface.yml");
-//		}
-//		else {
-//			std::cout << "Error: Couldn't create eigenface.yml. No data exists!" << std::endl;
-//		}
-//	}
-//
-//	this->objectCascade.load(cascadePath);
-//
-//	if (this->objectCascade.empty())
-//	{
-//		std::cout << "Error: Cascade classifer does not exist." << std::endl;
-//		assert(false);
-//	}
-//}
-
 // Initializes object detector with a path to the cascade classifier and a database.
 ObjectDetector::ObjectDetector(std::string cascadePath, Database& database) : database(database)
 {
@@ -35,7 +7,7 @@ ObjectDetector::ObjectDetector(std::string cascadePath, Database& database) : da
 	{
 		this->model->read("./data/eigenface.yml");
 	}
-	catch (const std::exception&)
+	catch (...)
 	{
 		if (!database.getIDs().empty()) // shit code.
 		{

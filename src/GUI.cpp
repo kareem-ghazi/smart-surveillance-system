@@ -1,47 +1,49 @@
 #include "GUI.h"
 #include "cvui.h"
 
+// Initialize variables and the Camera & Settings windows.
 GUI::GUI(cv::VideoCapture& capture, Database& database, ObjectDetector& faceDetector)
 : capture(capture), database(database), faceDetector(faceDetector) {
-    // Initialize the two GUIs.
-    const cv::String windows[] = { WINDOW1_NAME, WINDOW2_NAME };
-    cvui::init(windows, 2);
+    cvui::init(CAMERA);
+    cvui::init(SETTINGS_INFORMATION);
 }
 
 void GUI::render(cv::Mat& imageMatrix) {
     render(imageMatrix, std::vector<std::string>(), 0);
 }
 
-void GUI::render(cv::Mat& imageMatrix, std::vector<std::string> labels, int faces) {
+void GUI::render(cv::Mat& imageMatrix, std::vector<std::string> labels, int faceCount) {
     this->matrix = cv::Mat(330, 450, CV_8UC3, cv::Scalar(49, 52, 49));
     this->imageMatrix = imageMatrix;
 
-    renderInformationComponent(labels, faces);
+    renderInformationComponent(labels, faceCount);
     renderSettingsComponent();
 
     cvui::printf(matrix, 30, matrix.rows - 31, 0.4, 0xCECECE, "Copyright 2024 by Kareem Ghazi");
 
-    cvui::context(WINDOW2_NAME);
-    cvui::imshow(WINDOW1_NAME, imageMatrix);
-    cvui::imshow(WINDOW2_NAME, matrix);
+    cvui::imshow(CAMERA, imageMatrix);
+    cvui::imshow(SETTINGS_INFORMATION, matrix);
+
+    cvui::context(SETTINGS_INFORMATION);
 }
 
-void GUI::renderInformationComponent(std::vector<std::string> labels, int faces) {
+void GUI::renderInformationComponent(std::vector<std::string> labels, int faceCount) {
     cvui::window(matrix, 20, 20, 210, 240, "Information");
 
     cvui::beginColumn(matrix, 34, 55, -1, -1, 10);
+
     // Depending on the number of faces, show different messages.
-    if (faces >= 1) {
-        cvui::printf(0.4, 0xcccccc, "Number of People Detected: ");
-        cvui::printf(0.4, 0x00ff00, "%d", faces);
+    if (faceCount >= 1) {
+        cvui::printf(0.4, GRAY, "Number of People Detected: ");
+        cvui::printf(0.4, GREEN, "%d", faceCount);
     }
     else {
-        cvui::printf(0.4, 0xcccccc, "Number of People Detected: ");
-        cvui::printf(0.4, 0xcccccc, "%d", faces);
+        cvui::printf(0.4, GRAY, "Number of People Detected: ");
+        cvui::printf(0.4, GRAY, "%d", faceCount);
     }
 
     cvui::space(5);
-    cvui::printf(0.4, 0xcccccc, "Currently Detecting: ");
+    cvui::printf(0.4, GRAY, "Currently Detecting: ");
 
     int unknownFaces = 0;
     int knownFaces = 0;
@@ -56,21 +58,20 @@ void GUI::renderInformationComponent(std::vector<std::string> labels, int faces)
             unknownFaces++;
         }
         else {
-            cvui::text(label, 0.4, 0x00ff00);
+            cvui::text(label, 0.4, GREEN);
             knownFaces++;
         }
     }
 
     // Different messages depending on the amount of unknown faces found.
-    if (unknownFaces > 0 && knownFaces > 0)
-    {
-        cvui::printf(0.4, 0xff474c, "...and %d other people.", unknownFaces);
+    if (unknownFaces > 0 && knownFaces > 0) {
+        cvui::printf(0.4, RED, "...and %d other people.", unknownFaces);
     }
     else if (unknownFaces == 1) {
-        cvui::printf(0.4, 0xff474c, "%d unknown person.", unknownFaces);
+        cvui::printf(0.4, RED, "%d unknown person.", unknownFaces);
     }
     else if (unknownFaces > 1) {
-        cvui::printf(0.4, 0xff474c, "%d unknown people.", unknownFaces);
+        cvui::printf(0.4, RED, "%d unknown people.", unknownFaces);
     }
 
     cvui::endColumn();
@@ -96,7 +97,8 @@ void GUI::renderSettingsComponent() {
     cvui::checkbox(matrix, matrix.cols - 185, 80, "FPS Counter", &fpsCounter);
 
     // Fps counter only under the condition that the camera is open.
-    // NOTE: Doesn't work due to CAP_DSHOW api doesn't allow fps detection.
+    // NOTE: Doesn't work currently due to CAP_DSHOW api doesn't allow fps detection.
+    // Hardcoded 30 instead for now.
     if (fpsCounter && webcamOn)
     {
         cv::putText(imageMatrix, std::to_string(30), cv::Point(10, 20), cv::FONT_HERSHEY_DUPLEX, 0.6, cv::Scalar(0, 255, 0), 1.0);
@@ -105,58 +107,55 @@ void GUI::renderSettingsComponent() {
         fpsCounter = false;
     }
 
-    cvui::printf(matrix, matrix.cols - 185, 125, 0.4, 0xcccccc, "Adds a new person.");
+    cvui::printf(matrix, matrix.cols - 185, 125, 0.4, GRAY, "Adds a new person.");
     // When the add button is pressed.
     if (cvui::button(matrix, matrix.cols - 185, 145, "Add") && webcamOn) {
         std::cout << "Enter the person's name: ";
         std::cin >> name;
         std::cout << std::endl;
 
-        openWindow(WINDOW3_NAME);
-        isAdding = addEntry();
-    }
-
-    if (isAdding)
-    {
+        openWindow(ADD_WINDOW);
         isAdding = addEntry();
     }
 
     // When the remove button is pressed.
-    cvui::printf(matrix, matrix.cols - 185, 195, 0.4, 0xcccccc, "Removes a person.");
+    cvui::printf(matrix, matrix.cols - 185, 195, 0.4, GRAY, "Removes a person.");
     if (cvui::button(matrix, matrix.cols - 185, 215, "Remove") && webcamOn) {
         std::cout << "Enter the person's name: ";
         std::cin >> name;
         std::cout << std::endl;
 
-        openWindow(WINDOW4_NAME);
+        openWindow(REMOVE_WINDOW);
         isRemoving = removeEntry();
     }
 
+    // Update flags if currently in the process of removing or adding.
     if (isRemoving)
     {
         isRemoving = removeEntry();
+    } else if (isAdding)
+    {
+        isAdding = addEntry();
     }
 }
 
 bool GUI::addEntry()
 {
-    cvui::context(WINDOW3_NAME);
-    cv::Mat addEntryGUI = cv::Mat(90, 385, CV_8UC3, cv::Scalar(1, 31, 20));
+    cvui::context(ADD_WINDOW);
 
+    cv::Mat addEntryGUI = cv::Mat(90, 385, CV_8UC3, cv::Scalar(1, 31, 20));
     static std::vector<cv::Mat> images;
 
-    cvui::printf(addEntryGUI, 25, 20, 0.4, 0x00ff00, "Press the record button to record your face. (%d/10)", images.size() + 1);
+    cvui::printf(addEntryGUI, 25, 20, 0.4, GREEN, "Press the record button to record your face. (%d/10)", images.size() + 1);
     bool pressedRecord = cvui::button(addEntryGUI, 145, 45, "Record");
 
-    cvui::imshow(WINDOW3_NAME, addEntryGUI);
+    cvui::imshow(ADD_WINDOW, addEntryGUI);
 
     // When the record button is pressed and there are faces,
     // the image is processed and added to the array of faces.
     if (!pressedRecord) {
         return true;
     }
-
-    cvui::imshow(WINDOW3_NAME, addEntryGUI);
 
     capture >> imageMatrix;
     std::vector<cv::Rect> faces;
@@ -178,7 +177,7 @@ bool GUI::addEntry()
     // If we got 10 faces, close the window, add the entry, and train a new model.
     if (images.size() == 10)
     {
-        closeWindow(WINDOW3_NAME);
+        closeWindow(ADD_WINDOW);
         database.addEntry(name, images);
         faceDetector.trainModel();
 
@@ -193,31 +192,33 @@ bool GUI::addEntry()
 // This is because this function updates the frames for the window as well.
 bool GUI::removeEntry()
 {
-    cvui::context(WINDOW4_NAME);
-    cv::Mat removeSuccess(90, 350, CV_8UC3);
+    cvui::context(REMOVE_WINDOW);
+    cv::Mat removeStatus(90, 350, CV_8UC3);
 
     bool found = database.findEntry(name);
 
     // Shows the status window depending on the what occured from the attempt to delete an entry.
     if (found)
     {
-        removeSuccess = cv::Scalar(1, 31, 20);
-        cvui::printf(removeSuccess, 25, 20, 0.4, 0x00ff00, "Successfully removed person from the system!");
+        removeStatus = cv::Scalar(1, 31, 20);
+        cvui::printf(removeStatus, 25, 20, 0.4, GREEN, "Successfully removed person from the system!");
         database.deleteEntry(name);
         faceDetector.trainModel();
     }
     else {
-        removeSuccess = cv::Scalar(0, 0, 60);
-        cvui::printf(removeSuccess, 90, 20, 0.4, 0xff0000, "Error! Person doesn't exist.");
+        removeStatus = cv::Scalar(0, 0, 60);
+        cvui::printf(removeStatus, 90, 20, 0.4, DARK_RED, "Error! Person doesn't exist.");
     }
 
+    bool pressedClose = cvui::button(removeStatus, 135, 45, "Close");
+
     // Close button for the status window.
-    if (cvui::button(removeSuccess, 135, 45, "Close")) {
-        closeWindow(WINDOW4_NAME);
+    if (pressedClose) {
+        closeWindow(REMOVE_WINDOW);
         return false;
     }
 
-    cvui::imshow(WINDOW4_NAME, removeSuccess);
+    cvui::imshow(REMOVE_WINDOW, removeStatus);
     return true;
 }
 

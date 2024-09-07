@@ -12,6 +12,7 @@
 class Database
 {
 private:
+    const int IMAGE_COUNT = 10;
 	std::string databasePath;
 	std::vector<int> ids;
 	std::map<int, cv::String> labels;

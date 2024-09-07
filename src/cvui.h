@@ -30,17 +30,17 @@
    #define CVUI_IMPLEMENTATION
    #include "cvui.h"
 
-   #define WINDOW1_NAME "Window 1"
+   #define CAMERA "Window 1"
 
    int main() {
-     cvui::init(WINDOW1_NAME);
+     cvui::init(CAMERA);
      cv::Mat frame = cv::Mat(cv::Size(400, 200), CV_8UC3);
 
      while(true) {
        frame = cv::Scalar(49, 52, 49);
        cvui::text(frame, x, y, "Hello world!");
 
-	   cvui::imshow(WINDOW1_NAME, frame);
+	   cvui::imshow(CAMERA, frame);
 
        if (cv::waitKey(20) == 27) {
          break;

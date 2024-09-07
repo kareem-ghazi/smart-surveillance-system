@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 project(smart_surveillance_system)
 
-set(CMAKE_CXX_STANDARD 14)
-
 find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_executable(smart_surveillance_system
         src/cvui.h
@@ -16,4 +13,5 @@ add_executable(smart_surveillance_system
         src/GUI.cpp
         src/GUI.h)
 
-target_link_libraries(smart_surveillance_system ${OpenCV_LIBS})
+target_link_libraries(smart_surveillance_system PRIVATE ${OpenCV_LIBS})
+target_compile_features(smart_surveillance_system PRIVATE cxx_std_14)

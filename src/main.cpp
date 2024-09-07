@@ -12,7 +12,7 @@ int main() {
     ObjectDetector faceDetector("./data/haarcascade_frontalface_default.xml", database);
     GUI gui(cap, database, faceDetector);
 
-	while (cv::getWindowProperty(WINDOW2_NAME, cv::WND_PROP_VISIBLE) > 0)
+	while (cv::getWindowProperty(SETTINGS_INFORMATION, cv::WND_PROP_VISIBLE) > 0)
 	{
 		// In case the webcam is closed, just show an empty window with nothing in it.
 		if (!cap.isOpened())

@@ -16,11 +16,11 @@ Database::Database()
 	//dbCount.close();
 }
 
-// Initializes a specific database using a file path.
-Database::Database(std::string databasePath)
-{
-	this->databasePath = databasePath;
-}
+//// Initializes a specific database using a file path.
+//Database::Database(std::string databasePath)
+//{
+//	this->databasePath = databasePath;
+//}
 
 // Gets the ids from the database.
 std::vector<int> Database::getIDs() const
@@ -49,7 +49,7 @@ void Database::addEntry(std::string label, std::vector<cv::Mat> images)
 	iCount >> dbCount;
 	iCount.close();
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < IMAGE_COUNT; i++)
 	{
 		std::string path = this->databasePath + "/" + label + "_" + std::to_string(dbCount) + "_" + std::to_string(i) + ".jpg";
 		imwrite(path, images[i]);
@@ -67,7 +67,7 @@ void Database::deleteEntry(std::string name)
 {
     int id = getEntryID(name);
 
-    for (int j = 0; j < 10; j++)
+    for (int j = 0; j < IMAGE_COUNT; j++)
     {
         std::string image = this->databasePath + "/" + labels[id] + "_" + std::to_string(id) + "_" + std::to_string(j) + ".jpg";
 
@@ -108,7 +108,7 @@ void Database::loadEntries()
     std::vector<cv::String> files;
 	cv::glob(".\\data", files);
 
-    for (const auto& file : files) {
+    for (const cv::String& file : files) {
 		if (file == ".\\data\\count.txt" || file == ".\\data\\eigenface.yml" || file == ".\\data\\haarcascade_frontalface_default.xml")
 		{
 			continue;

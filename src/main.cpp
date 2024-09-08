@@ -1,5 +1,5 @@
 #define CVUI_IMPLEMENTATION
-#include "cvui.h"
+#include "../libs/cvui/cvui.h"
 
 #include "ObjectDetector.h"
 #include "Database.h"

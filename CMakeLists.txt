@@ -4,7 +4,7 @@ project(smart_surveillance_system)
 find_package(OpenCV REQUIRED)
 
 add_executable(smart_surveillance_system
-        src/cvui.h
+        libs/cvui/cvui.h
         src/Database.cpp
         src/Database.h
         src/main.cpp

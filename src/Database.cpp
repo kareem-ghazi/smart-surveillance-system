@@ -6,21 +6,18 @@ Database::Database()
 	this->databasePath = "./data";
 	this->loadEntries();
 
-	//std::ofstream dbCount("./data/count.txt");
+	std::ifstream dbCount("./data/count.txt");
 
-	//if (false) // doesn't exist
-	//{
-	//	dbCount << 0;
-	//}
+    // If the file doesn't exist, create a new one.
+	if (!dbCount.good())
+	{
+        std::ofstream newDBCount("./data/count.txt");
+        newDBCount << 0;
+        newDBCount.close();
+	}
 
-	//dbCount.close();
+	dbCount.close();
 }
-
-//// Initializes a specific database using a file path.
-//Database::Database(std::string databasePath)
-//{
-//	this->databasePath = databasePath;
-//}
 
 // Gets the ids from the database.
 std::vector<int> Database::getIDs() const

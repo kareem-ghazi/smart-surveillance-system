@@ -99,7 +99,7 @@ endif()
 
 
 
-# Some additional settings are required if OpenCV is built as static libs
+# Some additional settings are required if OpenCV is built as static lib
 set(OpenCV_SHARED ON)
 
 # Enables mangled install paths, that help with side by side installs

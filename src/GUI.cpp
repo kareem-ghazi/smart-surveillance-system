@@ -1,5 +1,5 @@
 #include "GUI.h"
-#include "../libs/cvui/cvui.h"
+#include "cvui/cvui.h"
 
 // Initialize variables and the Camera & Settings windows.
 GUI::GUI(cv::VideoCapture& capture, Database& database, ObjectDetector& faceDetector)

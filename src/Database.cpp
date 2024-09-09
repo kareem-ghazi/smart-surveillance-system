@@ -102,37 +102,29 @@ void Database::loadEntries()
 	ids.clear();
 	matrices.clear();
 
-    std::vector<cv::String> files;
+    std::vector<std::string> files;
 	cv::glob(".\\data", files);
 
-    for (const cv::String& file : files) {
+    for (std::string file : files) {
 		if (file == ".\\data\\count.txt" || file == ".\\data\\eigenface.yml" || file == ".\\data\\haarcascade_frontalface_default.xml")
 		{
 			continue;
 		}
 
-		std::string fileName = file;
-		std::string delimiter = "_";
-
-		size_t position = 0;
-		std::string token;
+        std::string fileName = file;
+        std::stringstream stringstr(fileName.erase(0, 7));
 
 		std::string label;
-		int id;
-		std::string filepathDelimeter = ".\\data\\";
+        getline(stringstr, label, '_');
 
-		position = fileName.find(delimiter);
-		label = fileName.substr(filepathDelimeter.length(), position - filepathDelimeter.length());
-		fileName.erase(0, position + 1);
+		std::string id;
+        getline(stringstr, id, '_');
 
-		position = fileName.find(delimiter);
-		id = stoi(fileName.substr(0, position));
+        cv::Mat matrix(cv::imread(file, 0));
 
-		cv::Mat matrix(cv::imread(file, 0));
-
-		matrices.push_back(matrix);
-		labels[id] = label;
-		ids.push_back(id);
+        matrices.push_back(matrix);
+        labels[stoi(id)] = label;
+        ids.push_back(stoi(id));
     }
 }
 

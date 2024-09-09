@@ -62,19 +62,17 @@ Download the latest version from the [releases](https://github.com/kareem-ghazi/
 8. You're done! The binaries, lib, and include files are in the install folder. Do not forget to edit your environmental variables to include OpenCV in your users PATH. 
 - ![](meta/build.png)
 
-### Including OpenCV in the Project
+### Running the Project
 1. Clone the project
 
 ```bash
   git clone https://github.com/kareem-ghazi/smart-surveillance-system
 ```
 
-2. Configure the `include` and `library directories for OpenCV in Visual Studio. 
-- ![](meta/vc++.png)
-
-3. Add `opencv_world4xx.lib` to your linker input (`opencv_world4xxd.lib` for debug configuration).
-- ![](meta/linker.png)
-
+2. Edit the `PATH` user environmental variable and add the path of OpenCV. (a pre-built version is available in the `lib` directory)
+```
+{LOCATION}\opencv\x64\vc17\bin
+```
 
 ## License
 

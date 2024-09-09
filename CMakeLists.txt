@@ -13,6 +13,8 @@ add_executable(smart_surveillance_system
         src/GUI.cpp
         src/GUI.h)
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/data/haarcascade_frontalface_default.xml ${CMAKE_CURRENT_BINARY_DIR}/data/haarcascade_frontalface_default.xml COPYONLY)
+
 target_include_directories(smart_surveillance_system PRIVATE lib/)
 target_link_libraries(smart_surveillance_system PRIVATE ${OpenCV_LIBS})
 target_compile_features(smart_surveillance_system PRIVATE cxx_std_14)

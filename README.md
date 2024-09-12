@@ -25,7 +25,7 @@ These are some of the missing or uncomplete features for the project.
 
 ## Screenshots
 
-![](meta/screenshot.png)
+![](meta/unknown.png)
 
 ## Installation
 

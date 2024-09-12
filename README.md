@@ -3,7 +3,7 @@
 
 This project is a smart surveillance system that could be used to recognize registered people on the system, detect how many people are there, or to monitor for suspicious or unknown people in a certain area.
 
-The system has been built in C++ using [OpenCV](https://github.com/opencv/opencv) along with a header-only library for the GUI called [cvui](https://github.com/Dovyski/cvui). It utilizes the [Viola–Jones](https://en.wikipedia.org/wiki/Viola%E2%80%93Jones_object_detection_framework) algorithm for the facial detection. Additionally, it utilizes the [Eigenfaces](https://en.wikipedia.org/wiki/Eigenface) algorithm for facial recognition. The image processing runs on the CPU (a GPU port for this project exists as well using NVIDIA CUDA).
+The system has been built in C++ using [OpenCV 4.9](https://github.com/opencv/opencv) along with a header-only library for the GUI called [cvui 2.7](https://github.com/Dovyski/cvui). It utilizes the [Viola–Jones](https://en.wikipedia.org/wiki/Viola%E2%80%93Jones_object_detection_framework) algorithm for the facial detection. Additionally, it utilizes the [Eigenfaces](https://en.wikipedia.org/wiki/Eigenface) algorithm for facial recognition. The image processing runs on the CPU (a GPU port for this project exists as well using NVIDIA CUDA).
 
 ## Features
 
@@ -20,10 +20,7 @@ Some of the features currently implemented are:
 
 These are some of the missing or uncomplete features for the project.
 
-- Better exception handling and code coverage.
-- Compiled version must include `opencv` dll.
 - Showing and hiding the console when dealing with input.
-- Eigenface.yml becomes read only when creating it for the first time.
 - String input isn't sanatized (*could write literally anything*).
 
 ## Screenshots

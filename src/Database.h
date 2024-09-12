@@ -1,34 +1,36 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
+#include <opencv2/opencv.hpp>
+
 #include <direct.h>
 #include <iostream>
 #include <fstream>
 #include <cstring>
-
-#include "Image.h"
+#include <map>
 
 class Database
 {
 private:
+    const int IMAGE_COUNT = 10;
 	std::string databasePath;
 	std::vector<int> ids;
-	std::vector<cv::String> labels;
-	std::vector<Image> images;
+	std::map<int, cv::String> labels;
 	std::vector<cv::Mat> matrices;
 
 public:
 	Database();
-	Database(std::string databasePath);
+    Database(std::string databasePath);
 
 	std::vector<int> getIDs() const;
-	std::vector<cv::String> getLabels() const;
-	std::vector<Image> getImages() const;
+    std::map<int, cv::String> getLabels() const;
 	std::vector<cv::Mat> getMatrices() const;
 
-	void addEntry(std::string name, Image images[10]);
+	void addEntry(std::string name, std::vector<cv::Mat> images);
+    bool findEntry(std::string name);
+    int getEntryID(std::string name);
 	void loadEntries();
-	bool deleteEntry(std::string name);
+	void deleteEntry(std::string name);
 };
 
 #endif

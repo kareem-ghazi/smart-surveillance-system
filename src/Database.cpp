@@ -6,20 +6,17 @@ Database::Database()
 	this->databasePath = "./data";
 	this->loadEntries();
 
-	//std::ofstream dbCount("./data/count.txt");
+	std::ifstream dbCount("./data/count.txt");
 
-	//if (false) // doesn't exist
-	//{
-	//	dbCount << 0;
-	//}
+    // If the file doesn't exist, create a new one.
+	if (!dbCount.good())
+	{
+        std::ofstream newDBCount("./data/count.txt");
+        newDBCount << 0;
+        newDBCount.close();
+	}
 
-	//dbCount.close();
-}
-
-// Initializes a specific database using a file path.
-Database::Database(std::string databasePath)
-{
-	this->databasePath = databasePath;
+	dbCount.close();
 }
 
 // Gets the ids from the database.
@@ -29,15 +26,9 @@ std::vector<int> Database::getIDs() const
 }
 
 // Gets the labels from the database.
-std::vector<cv::String> Database::getLabels() const
+std::map<int, cv::String> Database::getLabels() const
 {
 	return labels;
-}
-
-// Gets the images from the database.
-std::vector<Image> Database::getImages() const
-{
-	return images;
 }
 
 // Gets the image matrices from the database.
@@ -48,17 +39,17 @@ std::vector<cv::Mat> Database::getMatrices() const
 
 // Adds an entry to the database given a label and 10 images.
 // NOTE: Images are preprocessed before given to this function.
-void Database::addEntry(std::string label, Image images[10])
+void Database::addEntry(std::string label, std::vector<cv::Mat> images)
 {
 	std::ifstream iCount("./data/count.txt");
 	int dbCount;
 	iCount >> dbCount;
 	iCount.close();
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < IMAGE_COUNT; i++)
 	{
 		std::string path = this->databasePath + "/" + label + "_" + std::to_string(dbCount) + "_" + std::to_string(i) + ".jpg";
-		imwrite(path, images[i].getImageMatrix());
+		imwrite(path, images[i]);
 	}
 
 	std::ofstream oCount("./data/count.txt");
@@ -69,73 +60,71 @@ void Database::addEntry(std::string label, Image images[10])
 }
 
 // Deletes an entry from the database (if it exists).
-bool Database::deleteEntry(std::string name)
+void Database::deleteEntry(std::string name)
 {
-	for (int i = 0; i < labels.size(); i++)
-	{
-		if (labels[i] == name)
-		{
-			for (int j = 0; j < 10; j++)
-			{
-				std::string image = this->databasePath + "/" + labels[i] + "_" + std::to_string(i) + "_" + std::to_string(j) + ".jpg";
-				
-				const char* cImage = image.c_str();
-				remove(cImage);
-			}
+    int id = getEntryID(name);
 
-			return true;
-		}
-	}
+    for (int j = 0; j < IMAGE_COUNT; j++)
+    {
+        std::string image = this->databasePath + "/" + labels[id] + "_" + std::to_string(id) + "_" + std::to_string(j) + ".jpg";
 
-	return false;
+        const char* cImage = image.c_str();
+        remove(cImage);
+    }
+}
+
+bool Database::findEntry(std::string name)
+{
+    for (auto it = labels.begin(); it != labels.end(); ++it)
+    {
+        if (it->second == name)
+            return true;
+    }
+
+    return false;
+}
+
+int Database::getEntryID(std::string name)
+{
+    for (auto it = labels.begin(); it != labels.end(); ++it)
+    {
+        if (it->second == name)
+            return it->first;
+    }
+
+    return -1;
 }
 
 // Loads and updates entries from the database.
 void Database::loadEntries()
 {
-	images.clear();
     labels.clear();
 	ids.clear();
 	matrices.clear();
 
-    std::vector<cv::String> files;
+    std::vector<std::string> files;
 	cv::glob(".\\data", files);
 
-    for (const auto& file : files) {
+    for (std::string file : files) {
 		if (file == ".\\data\\count.txt" || file == ".\\data\\eigenface.yml" || file == ".\\data\\haarcascade_frontalface_default.xml")
 		{
 			continue;
 		}
 
-		std::string fileName = file;
-		std::string delimiter = "_";
-
-		size_t position = 0;
-		std::string token;
+        std::string fileName = file;
+        std::stringstream stringstr(fileName.erase(0, 7));
 
 		std::string label;
-		int id;
-		std::string filepathDelimeter = ".\\data\\";
+        getline(stringstr, label, '_');
 
-		position = fileName.find(delimiter);
-		label = fileName.substr(filepathDelimeter.length(), position - filepathDelimeter.length());
-		fileName.erase(0, position + 1);
+		std::string id;
+        getline(stringstr, id, '_');
 
-		position = fileName.find(delimiter);
-		id = stoi(fileName.substr(0, position));
+        cv::Mat matrix(cv::imread(file, 0));
 
-		Image image(cv::imread(file, 0));
-
-        images.push_back(image);
-		matrices.push_back(image.getImageMatrix());
-		
-		if (labels.capacity() <= id)
-		{
-			labels.resize(id + 1);
-		}
-		labels[id] = label;
-
-		ids.push_back(id);
+        matrices.push_back(matrix);
+        labels[stoi(id)] = label;
+        ids.push_back(stoi(id));
     }
 }
 

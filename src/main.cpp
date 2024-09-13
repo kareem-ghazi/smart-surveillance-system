@@ -1,3 +1,5 @@
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+
 #define CVUI_IMPLEMENTATION
 #include "cvui/cvui.h"
 

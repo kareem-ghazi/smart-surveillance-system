@@ -1,5 +1,6 @@
 #include "GUI.h"
 #include "cvui/cvui.h"
+#include "tinyfiledialogs/tinyfiledialogs.h"
 
 // Initialize variables and the Camera & Settings windows.
 GUI::GUI(cv::VideoCapture& capture, Database& database, ObjectDetector& faceDetector)
@@ -110,23 +111,31 @@ void GUI::renderSettingsComponent() {
     cvui::printf(matrix, matrix.cols - 185, 125, 0.4, GRAY, "Adds a new person.");
     // When the add button is pressed.
     if (cvui::button(matrix, matrix.cols - 185, 145, "Add") && webcamOn) {
-        std::cout << "Enter the person's name: ";
-        std::cin >> name;
-        std::cout << std::endl;
+        wchar_t* input = tinyfd_inputBoxW(L"Add", L"Enter the person`s name", L"");
 
-        openWindow(ADD_WINDOW);
-        isAdding = addEntry();
+        if (input != nullptr)
+        {
+            std::wstring wName(input);
+            name = std::string(wName.begin(), wName.end());
+
+            openWindow(ADD_WINDOW);
+            isAdding = addEntry();
+        }
     }
 
     // When the remove button is pressed.
     cvui::printf(matrix, matrix.cols - 185, 195, 0.4, GRAY, "Removes a person.");
     if (cvui::button(matrix, matrix.cols - 185, 215, "Remove") && webcamOn) {
-        std::cout << "Enter the person's name: ";
-        std::cin >> name;
-        std::cout << std::endl;
+        wchar_t* input = tinyfd_inputBoxW(L"Remove", L"Enter the person`s name", L"");
 
-        openWindow(REMOVE_WINDOW);
-        isRemoving = removeEntry();
+        if (input != nullptr)
+        {
+            std::wstring wName(input);
+            name = std::string(wName.begin(), wName.end());
+
+            openWindow(REMOVE_WINDOW);
+            isRemoving = removeEntry();
+        }
     }
 
     // Update flags if currently in the process of removing or adding.

@@ -4,7 +4,7 @@ project(smart_surveillance_system VERSION 1.0)
 find_package(OpenCV REQUIRED)
 
 add_executable(smart_surveillance_system
-        lib/cvui/cvui.h
+        lib/tinyfiledialogs/tinyfiledialogs.cpp
         src/Database.cpp
         src/Database.h
         src/main.cpp

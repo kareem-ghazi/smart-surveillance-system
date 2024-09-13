@@ -18,10 +18,9 @@ Some of the features currently implemented are:
 
 ## Roadmap
 
-These are some of the missing or uncomplete features for the project.
+These are some of the missing or uncompleted features for the project.
 
-- Showing and hiding the console when dealing with input.
-- String input isn't sanatized (*could write literally anything*).
+- String input isn't sanitized (*could write literally anything*).
 
 ## Screenshots
 

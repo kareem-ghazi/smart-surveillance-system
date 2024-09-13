@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(smart_surveillance_system VERSION 1.0)
+project(smart_surveillance_system VERSION 1.1)
 
 find_package(OpenCV REQUIRED)
 
